@@ -1,0 +1,17 @@
+/home/rinat/dev/VacanciesParser/VacanciesParser/bin/Debug/net10.0/VacanciesParser
+/home/rinat/dev/VacanciesParser/VacanciesParser/bin/Debug/net10.0/VacanciesParser.deps.json
+/home/rinat/dev/VacanciesParser/VacanciesParser/bin/Debug/net10.0/VacanciesParser.runtimeconfig.json
+/home/rinat/dev/VacanciesParser/VacanciesParser/bin/Debug/net10.0/VacanciesParser.dll
+/home/rinat/dev/VacanciesParser/VacanciesParser/bin/Debug/net10.0/VacanciesParser.pdb
+/home/rinat/dev/VacanciesParser/VacanciesParser/obj/Debug/net10.0/VacanciesParser.GeneratedMSBuildEditorConfig.editorconfig
+/home/rinat/dev/VacanciesParser/VacanciesParser/obj/Debug/net10.0/VacanciesParser.AssemblyInfoInputs.cache
+/home/rinat/dev/VacanciesParser/VacanciesParser/obj/Debug/net10.0/VacanciesParser.AssemblyInfo.cs
+/home/rinat/dev/VacanciesParser/VacanciesParser/obj/Debug/net10.0/VacanciesParser.csproj.CoreCompileInputs.cache
+/home/rinat/dev/VacanciesParser/VacanciesParser/obj/Debug/net10.0/VacanciesParser.dll
+/home/rinat/dev/VacanciesParser/VacanciesParser/obj/Debug/net10.0/refint/VacanciesParser.dll
+/home/rinat/dev/VacanciesParser/VacanciesParser/obj/Debug/net10.0/VacanciesParser.pdb
+/home/rinat/dev/VacanciesParser/VacanciesParser/obj/Debug/net10.0/VacanciesParser.genruntimeconfig.cache
+/home/rinat/dev/VacanciesParser/VacanciesParser/obj/Debug/net10.0/ref/VacanciesParser.dll
+/home/rinat/dev/VacanciesParser/VacanciesParser/bin/Debug/net10.0/Newtonsoft.Json.dll
+/home/rinat/dev/VacanciesParser/VacanciesParser/obj/Debug/net10.0/VacanciesParser.csproj.AssemblyReference.cache
+/home/rinat/dev/VacanciesParser/VacanciesParser/obj/Debug/net10.0/Vacancie.53AA0F77.Up2Date
