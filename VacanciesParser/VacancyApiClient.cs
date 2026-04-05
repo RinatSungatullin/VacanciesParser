@@ -11,8 +11,5 @@ public class VacancyApiClient
     string response = await client.GetStringAsync(url);
 
     return response;
-    /*var deserializedVacancies = JsonConvert.DeserializeObject<ApiResponseResult>(response);
-
-    return deserializedVacancies.Results.Vacancies;*/
   }
 }

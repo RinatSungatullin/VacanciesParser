@@ -1,11 +1,4 @@
-﻿using System.Globalization;
-using System.Net.Http.Json;
-using System.Net.Http;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using VacanciesParser;
+﻿using VacanciesParser;
 
 class Program
 {
@@ -29,7 +22,14 @@ class Program
 
     Console.WriteLine(deserializedVacancies.Results.Vacancies[0].Vacancy.JobName);*/
 
-    int i = 1;
+    string filePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/Downloads";
+
+    Console.WriteLine(filePath);
+    
+    FileService fileService = new FileService();
+    fileService.WriteVacanciesToCsv(deserialized, filePath, "vacancies");
+    
+    /*int i = 1;
 
     foreach (var v in deserialized)
     {
@@ -44,7 +44,7 @@ class Program
       Console.WriteLine("=============================================\n");
 
       i++;
-    }
+    }*/
 
 
   }

@@ -15,3 +15,4 @@
 /home/rinat/dev/VacanciesParser/VacanciesParser/bin/Debug/net10.0/Newtonsoft.Json.dll
 /home/rinat/dev/VacanciesParser/VacanciesParser/obj/Debug/net10.0/VacanciesParser.csproj.AssemblyReference.cache
 /home/rinat/dev/VacanciesParser/VacanciesParser/obj/Debug/net10.0/Vacancie.53AA0F77.Up2Date
+/home/rinat/dev/VacanciesParser/VacanciesParser/obj/Debug/net10.0/VacanciesParser.sourcelink.json
