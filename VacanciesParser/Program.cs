@@ -1,34 +1,29 @@
-﻿using VacanciesParser;
+﻿using System.Globalization;
+using System.Text;
+using VacanciesParser;
 
 class Program
 {
   static async Task Main(string[] args)
   {
-    VacancyApiClient apiClient = new VacancyApiClient();
-
-    var vacanciesJson = await apiClient.GetAllVacancies("http://opendata.trudvsem.ru/api/v1/vacancies/region/1800000000000");
-    
-    JSONDeserializer deserializer = new JSONDeserializer();
-    var deserialized = deserializer.DeserializeVacanciesJSON(vacanciesJson);
-
-    /*HttpClient client =  new HttpClient();
+    /*VacancyApiClient apiClient = new VacancyApiClient();
 
     string url = "http://opendata.trudvsem.ru/api/v1/vacancies/region/1800000000000";
 
-    string response = await client.GetStringAsync(url);
-
-    // Console.WriteLine(response);
-    var deserializedVacancies = JsonConvert.DeserializeObject<ApiResponseResult>(response);
-
-    Console.WriteLine(deserializedVacancies.Results.Vacancies[0].Vacancy.JobName);*/
-
-    string filePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/Downloads";
-
-    Console.WriteLine(filePath);
+    var vacanciesJson = await apiClient.GetAllVacancies(url);
     
-    FileService fileService = new FileService();
-    fileService.WriteVacanciesToCsv(deserialized, filePath, "vacancies");
+    JSONDeserializer deserializer = new JSONDeserializer();
+    var deserialized = deserializer.DeserializeVacanciesJSON(vacanciesJson);*/
+
+    string htmlUrl = "https://trudvsem.ru/vacancy/card/1027700404797/dd5e1240-3076-11f1-beff-fde346cfb777";
     
+    HtmlParser parser = new HtmlParser();
+    
+    string vacancyResponses = parser.GetVacancyResponses(htmlUrl);
+
+    Console.WriteLine(vacancyResponses);
+
+
     /*int i = 1;
 
     foreach (var v in deserialized)
@@ -38,7 +33,7 @@ class Program
       Console.WriteLine($"name: {v.Vacancy.JobName}");
       Console.WriteLine($"salary from {v.Vacancy.SalaryMin}");
       Console.WriteLine($"salary to {v.Vacancy.SalaryMax}");
-      Console.WriteLine($"vacancy url: {v.Vacancy.VacUrl}");
+      Console.WriteLine($"vacancy url: {v.Vacancy.VacancyUrl}");
       Console.WriteLine($"specialization: {v.Vacancy.Category.Specialisation}");
       Console.WriteLine($"education: {v.Vacancy.Requirement.Education}");
       Console.WriteLine("=============================================\n");
@@ -46,6 +41,12 @@ class Program
       i++;
     }*/
 
+    // сохранение csv
+    /*string filePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/Downloads";
 
+    Console.WriteLine(filePath);
+
+    FileService fileService = new FileService();
+    fileService.WriteVacanciesToCsv(deserialized, filePath, "vacancies");*/
   }
 }

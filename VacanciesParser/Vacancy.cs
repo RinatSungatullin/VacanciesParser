@@ -25,4 +25,8 @@ public class Vacancy
   
   [JsonProperty("requirement")]
   public Requirement Requirement { get; set; }
+  
+  public string Views { get; set; }
+  
+  public string Responses { get; set; }
 }
