@@ -1,52 +1,47 @@
-﻿using System.Globalization;
-using System.Text;
-using VacanciesParser;
+﻿using VacanciesParser;
 
 class Program
 {
   static async Task Main(string[] args)
   {
-    /*VacancyApiClient apiClient = new VacancyApiClient();
+    VacancyApiClient apiClient = new VacancyApiClient();
 
     string url = "http://opendata.trudvsem.ru/api/v1/vacancies/region/1800000000000";
 
     var vacanciesJson = await apiClient.GetAllVacancies(url);
     
     JSONDeserializer deserializer = new JSONDeserializer();
-    var deserialized = deserializer.DeserializeVacanciesJSON(vacanciesJson);*/
-
-    string htmlUrl = "https://trudvsem.ru/vacancy/card/1027700404797/dd5e1240-3076-11f1-beff-fde346cfb777";
+    var deserializedVacancies = deserializer.DeserializeVacanciesJSON(vacanciesJson);
     
-    HtmlParser parser = new HtmlParser();
+    ParserService parserService = new ParserService();
     
-    string vacancyResponses = parser.GetVacancyResponses(htmlUrl);
+    deserializedVacancies = await parserService.JoinVacancyViewAndResult(deserializedVacancies);
 
-    Console.WriteLine(vacancyResponses);
+    int i = 1;
 
-
-    /*int i = 1;
-
-    foreach (var v in deserialized)
+    foreach (var v in deserializedVacancies)
     {
       Console.WriteLine($"vacancy no {i}");
       Console.WriteLine($"id: {v.Vacancy.Id}");
       Console.WriteLine($"name: {v.Vacancy.JobName}");
       Console.WriteLine($"salary from {v.Vacancy.SalaryMin}");
       Console.WriteLine($"salary to {v.Vacancy.SalaryMax}");
-      Console.WriteLine($"vacancy url: {v.Vacancy.VacancyUrl}");
+      Console.WriteLine($"vacancy url: {v.Vacancy.Url}");
       Console.WriteLine($"specialization: {v.Vacancy.Category.Specialisation}");
       Console.WriteLine($"education: {v.Vacancy.Requirement.Education}");
+      Console.WriteLine($"responses: {v.Vacancy.Responses}");
+      Console.WriteLine($"views: {v.Vacancy.Views}");
       Console.WriteLine("=============================================\n");
 
       i++;
-    }*/
+    }
 
     // сохранение csv
-    /*string filePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/Downloads";
+    string filePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/Downloads";
 
     Console.WriteLine(filePath);
 
     FileService fileService = new FileService();
-    fileService.WriteVacanciesToCsv(deserialized, filePath, "vacancies");*/
+    fileService.WriteVacanciesToCsv(deserializedVacancies, filePath, "vacancies");
   }
 }

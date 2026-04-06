@@ -18,7 +18,7 @@ public class Vacancy
   public int SalaryMax { get; set; }
   
   [JsonProperty("vac_url")]
-  public string VacancyUrl { get; set; }
+  public string Url { get; set; }
   
   [JsonProperty("category")]
   public Category Category { get; set; }
