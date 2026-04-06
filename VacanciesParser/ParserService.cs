@@ -1,3 +1,5 @@
+using Microsoft.Playwright;
+
 namespace VacanciesParser;
 
 public class ParserService

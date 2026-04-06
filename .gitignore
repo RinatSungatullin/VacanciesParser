@@ -1,0 +1,29 @@
+# Build folders
+bin/
+obj/
+
+# Playwright browsers
+.playwright/
+
+# Rider / IDE files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.idea/
+*.vs/
+
+# Temporary files
+*.log
+*.tmp
+*.bak
+
+# Visual Studio Code
+.vscode/
+
+# Игнорируем папки с собранными бинарниками
+bin/
+obj/
+
+# Игнорируем Playwright, чтобы большие файлы не добавлялись
+.playwright/
