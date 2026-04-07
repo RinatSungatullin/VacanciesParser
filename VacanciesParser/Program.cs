@@ -4,7 +4,7 @@ class Program
 {
   static async Task Main(string[] args)
   {
-    VacancyApiClient apiClient = new VacancyApiClient();
+    /*VacancyApiClient apiClient = new VacancyApiClient();
 
     string url = "http://opendata.trudvsem.ru/api/v1/vacancies/region/1800000000000";
 
@@ -34,14 +34,17 @@ class Program
       Console.WriteLine("=============================================\n");
 
       i++;
-    }
+    }*/
 
     // сохранение csv
     string filePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/Downloads";
 
-    Console.WriteLine(filePath);
+    /*Console.WriteLine(filePath);
 
     FileService fileService = new FileService();
-    fileService.WriteVacanciesToCsv(deserializedVacancies, filePath, "vacancies");
+    fileService.WriteVacanciesToCsv(deserializedVacancies, filePath, "vacancies");*/
+    
+    ParserService ps = new ParserService();
+    ps.ReadVacanciesCsv($"{filePath}/vacancies.csv", "asd");
   }
 }

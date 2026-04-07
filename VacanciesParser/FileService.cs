@@ -21,4 +21,24 @@ public class FileService
       }
     }
   }
+
+  public List<string> ReadCsv(string filePath)
+  {
+    List<string> lines = new List<string>();
+
+    
+    using (StreamReader sr = new StreamReader(filePath, Encoding.UTF8))
+    {
+      string line = sr.ReadLine();
+
+      while (line != null)
+      {
+        line = sr.ReadLine();
+        
+        lines.Add(line);
+      }
+    }
+
+    return lines;
+  }
 }
