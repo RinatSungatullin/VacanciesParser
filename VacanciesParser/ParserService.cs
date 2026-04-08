@@ -4,97 +4,157 @@ namespace VacanciesParser;
 
 public class ParserService
 {
+  private FileService fileService;
+  
   private Dictionary<string, List<string>> ProfessionalCategories = new Dictionary<string, List<string>>()
   {
     ["Руководители"] = new List<string>
     {
-      "руководитель",
-      "начальник",
-      "заведующий",
-      "ведущий"
+        "руководитель",
+        "начальник",
+        "заведующий",
+        "ведущий",
+        "директор",
+        "заместитель"
     },
 
     ["Специалисты высшего уровня"] = new List<string>
     {
-      "врач",
-      "инженер",
-      "программист",
-      "системный администратор",
-      "юрисконсульт",
-      "специалист",
-      "инспектор",
-      "лесничий",
-      "муниципальный служащий"
+        "врач",
+        "ветеринар",
+        "инженер",
+        "программист",
+        "системный администратор",
+        "юрисконсульт",
+        "специалист",
+        "инспектор",
+        "лесничий",
+        "муниципальный служащий",
+        "юрис",
+        "фармацевт",
+        "оценщик",
+        "энергетик",
+        "проектировщик",
+        "конструктор",
+        "электроник",
+        "бухгалтер"
     },
 
     ["Специалисты среднего уровня"] = new List<string>
     {
-      "администратор",
-      "продавец",
-      "консультант",
-      "педагог",
-      "воспитатель",
-      "помощник воспитателя",
-      "младший воспитатель",
-      "инструктор",
-      "тренер",
-      "фармацевт",
-      "массажист",
-      "медицинская сестра",
-      "кондуктор"
+        "администратор",
+        "продавец",
+        "консультант",
+        "педагог",
+        "преподаватель",
+        "воспитатель",
+        "помощник воспитателя",
+        "младший воспитатель",
+        "инструктор",
+        "тренер",
+        "массажист",
+        "медицинская сестра",
+        "кондуктор",
+        "токарь",
+        "воспитат",
+        "кондитер",
+        "гример",
+        "стрелок",
+        "экскурсовод",
+        "экспозицион",
+        "кассир",
+        "портье",
+        "диспетчер",
+        "товаровед",
+        "оператор видеонаблюдения"
     },
 
     ["Рабочие промышленности, строительства, транспорта"] = new List<string>
     {
-      "слесарь",
-      "электромонтер",
-      "техник",
-      "повар",
-      "пекарь",
-      "рабочий",
-      "мастер",
-      "водитель",
-      "грузчик"
+        "слесарь",
+        "электромонтер",
+        "электромеханик",
+        "электрик",
+        "техник",
+        "повар",
+        "пекарь",
+        "рабочий",
+        "работник",
+        "мастер",
+        "водитель",
+        "грузчик",
+        "кочегар",
+        "приемщик",
+        "паяльщик",
+        "промывщик",
+        "бурильщик",
+        "правильщик",
+        "полировщик",
+        "сварщик",
+        "электрогазосварщик",
+        "фрезеровщик",
+        "сверловщик",
+        "монтажник",
+        "маркировщик",
+        "мойщик",
+        "тракторист",
+        "сборщик",
+        "укладчик"
     },
 
     ["Операторы, аппаратчики, машинисты"] = new List<string>
     {
-      "оператор",
-      "машинист",
-      "аппаратчик"
+        "оператор",
+        "машинист",
+        "аппаратчик",
+        "наладчик",
+        "котельной",
+        "машинного доения"
     },
 
     ["Неквалифицированные рабочие"] = new List<string>
     {
-      "охранник"
+        "охранник",
+        "дворник",
+        "уборщик",
+        "уборщица",
+        "упаковщик",
+        "укладчик-упаковщик"
     }
   };
-    
+
+  public ParserService()
+  {
+    this.fileService = new FileService();
+  }
+  
   public async Task<List<VacancyWrapper>> JoinVacancyViewAndResult(List<VacancyWrapper> vacancies)
   {
+    Console.WriteLine("parsing html");
     HtmlParser parser = new HtmlParser();
 
     for (int i = 0; i < vacancies.Count; i++)
     {
+      Console.WriteLine($"getting vacancy No {i + 1}");
+      
       var currentVacancyUrl = vacancies[i].Vacancy.Url;
 
       Console.WriteLine($"vacancy id: {vacancies[i].Vacancy.Id}");
-      Console.WriteLine($"vacancy url: {currentVacancyUrl}");
       
-      Console.WriteLine($"getting vacancy No {i + 1}");
-      vacancies[i].Vacancy.Responses = await parser.GetValueByKey(currentVacancyUrl, "Количество откликов");
-      Console.WriteLine($"responses result:{vacancies[i].Vacancy.Responses}");
+      string vacancyView = await parser.GetValueByKey(currentVacancyUrl, "Просмотры вакансии");
+
+      if (vacancyView != null)
+        vacancies[i].Vacancy.Views = vacancyView;
       
-      vacancies[i].Vacancy.Views = await parser.GetValueByKey(currentVacancyUrl, "Просмотры вакансии");
-      Console.WriteLine($"views result:{vacancies[i].Vacancy.Views}");
+      Console.WriteLine($"views:{vacancies[i].Vacancy.Views}");
     }
     
     return vacancies;
   }
 
-  public List<VacancyStatistic> ReadVacanciesCsv(string filePath, string fileName)
+  public List<VacancyStatisticSample> ReadVacanciesCsv(string filePath, string fileName)
   {
-    List<VacancyStatistic> vacancies = new List<VacancyStatistic>();
+    List<VacancyStatisticSample> vacancies = new List<VacancyStatisticSample>();
     
     FileService fs = new FileService();
 
@@ -113,23 +173,21 @@ public class ParserService
     return vacancies;
   }
 
-  private VacancyStatistic MapLinesToVacancyStatistics(string line)
+  private VacancyStatisticSample MapLinesToVacancyStatistics(string line)
   {
     Console.WriteLine("maping lines to vacancy statistics");
+    
     string[] vacancySplit = line.Split(';');
 
     int averageSalary = (int.Parse(vacancySplit[2]) + int.Parse(vacancySplit[3])) / 2;
 
-    Console.WriteLine($"average salary: {averageSalary}");
     
-    int vacancyView = int.Parse(vacancySplit[8]);
+    int vacancyView = int.Parse(vacancySplit[7]);
 
-    Console.WriteLine($"vacancy view: {vacancyView}");
-
-    return new VacancyStatistic(GetProfessionalGroup(vacancySplit[1]), averageSalary, vacancyView);
+    return new VacancyStatisticSample(GetProfessionalGroup(vacancySplit[1]), averageSalary, vacancyView);
   }
 
-  public string GetProfessionalGroup(string vacancyName)
+  private string GetProfessionalGroup(string vacancyName)
   {
     foreach (var p in  ProfessionalCategories)
     {
@@ -137,7 +195,7 @@ public class ParserService
       {
         if (c == vacancyName.ToLower())
         {
-          Console.WriteLine(p.Key);
+          // Console.WriteLine(p.Key);
           return p.Key;
         }
       }
@@ -149,12 +207,47 @@ public class ParserService
       {
         if (vacancyName.ToLower().Contains(c))
         {
-          Console.WriteLine(p.Key);
+          // Console.WriteLine(p.Key);
           return p.Key;
         }
       }
     }
     
     return null;
+  }
+
+  public List<VacancyStatistic> CalculateVacancyStatistic(List<VacancyStatisticSample> vacancies)
+  {
+    var result = new List<VacancyStatistic>();
+
+    foreach (var kvp in this.ProfessionalCategories)
+    {
+      string groupName = kvp.Key;
+
+      var items = vacancies
+        .Where(x => x.ProfessionalGroup == groupName)
+        .ToList();
+
+      int count = items.Count;
+
+      int avgSalary = count > 0 ? (int)Math.Round(items.Average(x => x.AverageSalary)) : 0;
+
+      int views = items.Sum(x => x.VacancyViews);
+
+      result.Add(new VacancyStatistic(groupName, count, avgSalary, views));
+    }
+
+    return result;
+  }
+
+  public void WriteSummaryTableToCsv(List<VacancyStatistic>vacanciesStatistic, string vacancyStatisticFullPath)
+  {
+    VacancyStatisticCalculator statisticCalculator = new VacancyStatisticCalculator(
+      vacanciesStatistic.Sum(x => x.Quantity),
+      (int)vacanciesStatistic.Average(x => x.AverageSalary),
+      vacanciesStatistic.Sum(x => x.Views)
+      );
+    
+    this.fileService.WriteSummaryTableToCsv(vacanciesStatistic, statisticCalculator, vacancyStatisticFullPath);
   }
 }

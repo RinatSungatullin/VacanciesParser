@@ -11,13 +11,13 @@ public class FileService
     using (StreamWriter sw = new StreamWriter(fullPath, false, Encoding.UTF8))
     {
       sw.WriteLine("vacancy_id;vacancy_name;salary_from;salary_to;vacancy_url;" +
-                   "specialization;education;vacancy_responses;vacancy_views;");
+                   "specialization;education;vacancy_views;");
 
       foreach (var v in vacancies)
       {
         sw.WriteLine($"{v.Vacancy.Id};{v.Vacancy.JobName};{v.Vacancy.SalaryMin};{v.Vacancy.SalaryMax};" +
                      $"{v.Vacancy.Url};{v.Vacancy.Category.Specialisation};{v.Vacancy.Requirement.Education};" +
-                     $"{v.Vacancy.Responses};{v.Vacancy.Views}");
+                     $"{v.Vacancy.Views}");
       }
     }
   }
@@ -40,5 +40,19 @@ public class FileService
     }
 
     return lines;
+  }
+
+  public void WriteSummaryTableToCsv(List<VacancyStatistic> vacancies, VacancyStatisticCalculator statisticCalculator, string fullPath)
+  {
+    using (StreamWriter sw = new StreamWriter(fullPath, false, Encoding.UTF8))
+    {
+      sw.WriteLine("Профессиональная группа;Количество заявленных вакансий;Средняя заработная плата;количество просмотров соискателями");
+      foreach (var v in vacancies)
+      {
+        sw.WriteLine($"{v.ProfessionalGroup};{v.Quantity};{v.AverageSalary};{v.Views}");
+      }
+      
+      sw.WriteLine($"Итог;{statisticCalculator.TotalVacancies};{statisticCalculator.TotalSalaryAverage};{statisticCalculator.TotalViews}");
+    }
   }
 }

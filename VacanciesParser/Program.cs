@@ -37,28 +37,32 @@ class Program
     }*/
 
     // сохранение csv
-    string filePath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}\Downloads";
+     string vacanciesFilePath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}\Downloads";
 
-    /*Console.WriteLine(filePath);
+    //Console.WriteLine(vacanciesFilePath);
 
     FileService fileService = new FileService();
-    fileService.WriteVacanciesToCsv(deserializedVacancies, filePath, "vacancies");*/
+    //fileService.WriteVacanciesToCsv(deserializedVacancies, vacanciesFilePath, "vacancies");
+
+    // чтение vacancies.csv
+    string vacanciesFullPath = $@"{vacanciesFilePath}\vacancies.csv";
     
-    string fullPath = $@"{filePath}\vacancies.csv";
+    string vacancyStatisticFullPath = $@"{vacanciesFilePath}\vacancies_statistic.csv";
 
-    Console.WriteLine(fullPath);
     ParserService ps = new ParserService();
-    var vacancies = ps.ReadVacanciesCsv(fullPath, "asd");
+    
+    var vacancies = ps.ReadVacanciesCsv(vacanciesFullPath, "asd");
 
-    int i = 1;
-    foreach (var v in vacancies)
+    var vacanciesStatistic = ps.CalculateVacancyStatistic(vacancies);
+
+    foreach (var vc in vacanciesStatistic)
     {
-      Console.WriteLine($"vacancy no {i}");
-      Console.WriteLine($"{v.ProfessionalGroup}");
-      Console.WriteLine($"{v.AverageSalary}");
-      Console.WriteLine($"{v.VacancyViews}");
-
-      i++;
+      Console.WriteLine(vc.ProfessionalGroup);
+      Console.WriteLine(vc.AverageSalary);
+      Console.WriteLine(vc.Quantity);
+      Console.WriteLine(vc.Views);
     }
+    
+    ps.WriteSummaryTableToCsv(vacanciesStatistic, vacancyStatisticFullPath);
   }
 }
