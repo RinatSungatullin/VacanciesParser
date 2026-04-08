@@ -104,7 +104,10 @@ public class ParserService
 
     foreach (var line in lines)
     {
-      vacancies.Add(MapLinesToVacancyStatistics(line));
+      if (!string.IsNullOrWhiteSpace(line))
+      {
+        vacancies.Add(MapLinesToVacancyStatistics(line));
+      }
     }
     
     return vacancies;
@@ -112,19 +115,46 @@ public class ParserService
 
   private VacancyStatistic MapLinesToVacancyStatistics(string line)
   {
-    string[] split = line.Split(';');
+    Console.WriteLine("maping lines to vacancy statistics");
+    string[] vacancySplit = line.Split(';');
 
-    int averageSalary = int.Parse(split[2]) + int.Parse(split[3]);
+    int averageSalary = (int.Parse(vacancySplit[2]) + int.Parse(vacancySplit[3])) / 2;
+
+    Console.WriteLine($"average salary: {averageSalary}");
     
-    int vacancyView = int.Parse(split[8]);
+    int vacancyView = int.Parse(vacancySplit[8]);
 
-    return new VacancyStatistic("test group", averageSalary, vacancyView);
+    Console.WriteLine($"vacancy view: {vacancyView}");
+
+    return new VacancyStatistic(GetProfessionalGroup(vacancySplit[1]), averageSalary, vacancyView);
   }
 
   public string GetProfessionalGroup(string vacancyName)
   {
+    foreach (var p in  ProfessionalCategories)
+    {
+      foreach (var c in p.Value)
+      {
+        if (c == vacancyName.ToLower())
+        {
+          Console.WriteLine(p.Key);
+          return p.Key;
+        }
+      }
+    }
     
+    foreach (var p in  ProfessionalCategories)
+    {
+      foreach (var c in p.Value)
+      {
+        if (vacancyName.ToLower().Contains(c))
+        {
+          Console.WriteLine(p.Key);
+          return p.Key;
+        }
+      }
+    }
     
-    return "";
+    return null;
   }
 }

@@ -37,14 +37,28 @@ class Program
     }*/
 
     // сохранение csv
-    string filePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/Downloads";
+    string filePath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}\Downloads";
 
     /*Console.WriteLine(filePath);
 
     FileService fileService = new FileService();
     fileService.WriteVacanciesToCsv(deserializedVacancies, filePath, "vacancies");*/
     
+    string fullPath = $@"{filePath}\vacancies.csv";
+
+    Console.WriteLine(fullPath);
     ParserService ps = new ParserService();
-    ps.ReadVacanciesCsv($"{filePath}/vacancies.csv", "asd");
+    var vacancies = ps.ReadVacanciesCsv(fullPath, "asd");
+
+    int i = 1;
+    foreach (var v in vacancies)
+    {
+      Console.WriteLine($"vacancy no {i}");
+      Console.WriteLine($"{v.ProfessionalGroup}");
+      Console.WriteLine($"{v.AverageSalary}");
+      Console.WriteLine($"{v.VacancyViews}");
+
+      i++;
+    }
   }
 }
