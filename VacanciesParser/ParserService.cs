@@ -15,7 +15,11 @@ public class ParserService
         "заведующий",
         "ведущий",
         "директор",
-        "заместитель"
+        "заместитель",
+        "глава",
+        "старший",
+        "мастер цеха",
+        "начальник отдела"
     },
 
     ["Специалисты высшего уровня"] = new List<string>
@@ -37,7 +41,14 @@ public class ParserService
         "проектировщик",
         "конструктор",
         "электроник",
-        "бухгалтер"
+        "бухгалтер",
+        "экономист",
+        "эколог",
+        "психолог",
+        "тьютор",
+        "учитель",
+        "преподаватель",
+        "эксперт"
     },
 
     ["Специалисты среднего уровня"] = new List<string>
@@ -54,6 +65,8 @@ public class ParserService
         "тренер",
         "массажист",
         "медицинская сестра",
+        "медицинский брат",
+        "медицинский регистратор",
         "кондуктор",
         "токарь",
         "воспитат",
@@ -66,7 +79,11 @@ public class ParserService
         "портье",
         "диспетчер",
         "товаровед",
-        "оператор видеонаблюдения"
+        "оператор видеонаблюдения",
+        "документовед",
+        "социальный работник",
+        "бухгалтер 1",
+        "бухгалтер 2"
     },
 
     ["Рабочие промышленности, строительства, транспорта"] = new List<string>
@@ -75,10 +92,14 @@ public class ParserService
         "электромонтер",
         "электромеханик",
         "электрик",
+        "электромонтажник",
         "техник",
+        "технолог",
         "повар",
         "пекарь",
         "рабочий",
+        "подсобный",
+        "разнорабочий",
         "работник",
         "мастер",
         "водитель",
@@ -99,7 +120,12 @@ public class ParserService
         "мойщик",
         "тракторист",
         "сборщик",
-        "укладчик"
+        "укладчик",
+        "плотник",
+        "термист",
+        "срезчик",
+        "швейного",
+        "скважин"
     },
 
     ["Операторы, аппаратчики, машинисты"] = new List<string>
@@ -109,17 +135,24 @@ public class ParserService
         "аппаратчик",
         "наладчик",
         "котельной",
-        "машинного доения"
+        "машинного доения",
+        "станка",
+        "установки"
     },
 
     ["Неквалифицированные рабочие"] = new List<string>
     {
         "охранник",
+        "сторож",
+        "вахтер",
         "дворник",
         "уборщик",
         "уборщица",
+        "санитар",
+        "санитарка",
         "упаковщик",
-        "укладчик-упаковщик"
+        "укладчик-упаковщик",
+        "гардеробщик"
     }
   };
 
@@ -152,15 +185,14 @@ public class ParserService
     return vacancies;
   }
 
-  public List<VacancyStatisticSample> ReadVacanciesCsv(string filePath, string fileName)
+  public List<VacancyStatisticSample> ReadVacanciesCsv(string filePath)
   {
     List<VacancyStatisticSample> vacancies = new List<VacancyStatisticSample>();
     
     FileService fs = new FileService();
 
-    string fullPath = $"{filePath}";
     
-    List<string> lines = fs.ReadCsv(fullPath);
+    List<string> lines = fs.ReadCsv(filePath);
 
     foreach (var line in lines)
     {
@@ -175,8 +207,6 @@ public class ParserService
 
   private VacancyStatisticSample MapLinesToVacancyStatistics(string line)
   {
-    Console.WriteLine("maping lines to vacancy statistics");
-    
     string[] vacancySplit = line.Split(';');
 
     int averageSalary = (int.Parse(vacancySplit[2]) + int.Parse(vacancySplit[3])) / 2;
@@ -195,7 +225,6 @@ public class ParserService
       {
         if (c == vacancyName.ToLower())
         {
-          // Console.WriteLine(p.Key);
           return p.Key;
         }
       }
@@ -207,13 +236,17 @@ public class ParserService
       {
         if (vacancyName.ToLower().Contains(c))
         {
-          // Console.WriteLine(p.Key);
           return p.Key;
         }
       }
     }
     
     return null;
+  }
+
+  public void WriteVacanciesToCsv(List<VacancyWrapper> vacancies, string vacanciesFilePath, string fileName)
+  {
+    this.fileService.WriteVacanciesToCsv(vacancies, vacanciesFilePath, fileName);
   }
 
   public List<VacancyStatistic> CalculateVacancyStatistic(List<VacancyStatisticSample> vacancies)
@@ -240,7 +273,8 @@ public class ParserService
     return result;
   }
 
-  public void WriteSummaryTableToCsv(List<VacancyStatistic>vacanciesStatistic, string vacancyStatisticFullPath)
+  public void WriteSummaryTableToCsv(List<VacancyStatistic>vacanciesStatistic,
+                                      string vacancyStatisticFullPath)
   {
     VacancyStatisticCalculator statisticCalculator = new VacancyStatisticCalculator(
       vacanciesStatistic.Sum(x => x.Quantity),
