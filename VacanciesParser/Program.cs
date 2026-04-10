@@ -6,7 +6,7 @@ class Program
   {
     ParserService parserService = new ParserService();
     
-    string baseFilePath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}\Downloads";
+    string baseFilePath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/Downloads";
     
     string apiUrl = "http://opendata.trudvsem.ru/api/v1/vacancies/region/1800000000000";
 
@@ -14,13 +14,15 @@ class Program
 
     List<VacancyWrapper> vacancies = DeserializeVacancies(vacanciesJSON);
 
-    vacancies = await parserService.JoinVacancyViewAndResult(vacancies);
+    vacancies = await parserService.JoinVacancyView(vacancies);
+    
+    parserService.FixEmptyValue(vacancies);
     
     parserService.WriteVacanciesToCsv(vacancies, baseFilePath, "vacancies");
 
-    string vacanciesTablePath = $@"{baseFilePath}\vacancies.csv";
+    string vacanciesTablePath = $@"{baseFilePath}/vacancies.csv";
     
-    string vacanciesStatisticTablePath = $@"{baseFilePath}\vacancies_statistic.csv";
+    string vacanciesStatisticTablePath = $@"{baseFilePath}/vacancies_statistic.csv";
     
     List<VacancyStatisticSample> vacancyStatisticSamples = parserService.ReadVacanciesCsv(vacanciesTablePath);
 
