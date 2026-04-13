@@ -9,7 +9,7 @@ public class ResumeService
     this.professionalCategory = new ProfessionalCategory();
   }
   
-  public async Task GetResume(string htmlUrl)
+  public async Task<List<Resume>> GetResume(string htmlUrl)
   {
     ResumeHtmlParser  parser = new ResumeHtmlParser();
 
@@ -17,8 +17,6 @@ public class ResumeService
     
     await parser.ParseResume(resumeList, htmlUrl);
     
-    // var resumeList = await parser.ParseResume(html);
-
     foreach (var r in resumeList)
     {
       Console.WriteLine($"job name: {r.JobName}");
@@ -26,6 +24,8 @@ public class ResumeService
     }
 
     Console.WriteLine($"всего резюме: {resumeList.Count}");
+
+    return resumeList;
   }
 
   private string SetProfessionalGroup(string jobName)

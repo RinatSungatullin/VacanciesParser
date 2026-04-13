@@ -7,7 +7,6 @@ public class ResumeHtmlParser
 {
   public async Task<List<Resume>> ParseResume(List<Resume> resumeList, string htmlUrl)
   {
-    //var resumeList = new List<Resume>();
 
     using var playwright = await Playwright.CreateAsync();
 
