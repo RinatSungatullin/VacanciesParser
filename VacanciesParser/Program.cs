@@ -6,7 +6,7 @@ class Program
   {
     /*ParserService parserService = new ParserService();
     
-    string baseFilePath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}\Downloads";
+    string baseFilePath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/Downloads";
     
     string apiUrl = "http://opendata.trudvsem.ru/api/v1/vacancies/region/1800000000000";
 
@@ -21,9 +21,9 @@ class Program
     // запись вакансий в таблицу
     parserService.WriteVacanciesToCsv(vacancies, baseFilePath, "vacancies");
 
-    string vacanciesTablePath = $@"{baseFilePath}\vacancies.csv";
+    string vacanciesTablePath = $@"{baseFilePath}/vacancies.csv";
     
-    string vacanciesStatisticTablePath = $@"{baseFilePath}\vacancies_statistic.csv";
+    string vacanciesStatisticTablePath = $@"{baseFilePath}/vacancies_statistic.csv";
     
     // чтение таблицы вакансий
     List<VacancyStatisticSample> vacancyStatisticSamples = parserService.ReadVacanciesCsv(vacanciesTablePath);

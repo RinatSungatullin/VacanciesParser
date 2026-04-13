@@ -50,7 +50,14 @@ public class VacancyService
         "тьютор",
         "учитель",
         "преподаватель",
-        "эксперт"
+        "эксперт",
+        "библиотек",
+        "дефектолог",
+        "логопед",
+        "фельдшер",
+        "лаборант",
+        "бухгалтер",
+        "микробиолог"
     },
 
     ["Специалисты среднего уровня"] = new List<string>
@@ -84,8 +91,9 @@ public class VacancyService
         "оператор видеонаблюдения",
         "документовед",
         "социальный работник",
-        "бухгалтер 1",
-        "бухгалтер 2"
+        "кладовщик",
+        "дежурный",
+        "советник"
     },
 
     ["Рабочие промышленности, строительства, транспорта"] = new List<string>
@@ -127,6 +135,14 @@ public class VacancyService
         "термист",
         "срезчик",
         "швейного",
+        "пожарный",
+        "штукатур",
+        "маляр",
+        "монтер",
+        "обработчик",
+        "прораб",
+        "производитель работ",
+        "погрузчик",
         "скважин"
     },
 
@@ -139,7 +155,8 @@ public class VacancyService
         "котельной",
         "машинного доения",
         "станка",
-        "установки"
+        "установки",
+        "экскаватор"
     },
 
     ["Неквалифицированные рабочие"] = new List<string>
@@ -154,16 +171,19 @@ public class VacancyService
         "санитарка",
         "упаковщик",
         "укладчик-упаковщик",
-        "гардеробщик"
+        "гардеробщик",
+        "подсобный рабочий"
     }
   };*/
 
   public VacancyService()
   {
     this.fileService = new FileService();
+    
+    this.professionalCategory = new ProfessionalCategory();
   }
   
-  public async Task<List<VacancyWrapper>> JoinVacancyViewAndResult(List<VacancyWrapper> vacancies)
+  public async Task<List<VacancyWrapper>> JoinVacancyView(List<VacancyWrapper> vacancies)
   {
     Console.WriteLine("parsing html");
     VacancyHtmlParser parser = new VacancyHtmlParser();
@@ -178,8 +198,10 @@ public class VacancyService
       
       string vacancyView = await parser.GetValueByKey(currentVacancyUrl, "Просмотры вакансии");
 
-      if (vacancyView != null)
+      if (!string.IsNullOrEmpty(vacancyView))
+      {
         vacancies[i].Vacancy.Views = vacancyView;
+      }
       
       Console.WriteLine($"views:{vacancies[i].Vacancy.Views}");
     }
@@ -212,7 +234,6 @@ public class VacancyService
     string[] vacancySplit = line.Split(';');
 
     int averageSalary = (int.Parse(vacancySplit[2]) + int.Parse(vacancySplit[3])) / 2;
-
     
     int vacancyView = int.Parse(vacancySplit[7]);
 
@@ -285,5 +306,18 @@ public class VacancyService
       );
     
     this.fileService.WriteSummaryTableToCsv(vacanciesStatistic, statisticCalculator, vacancyStatisticFullPath);
+  }
+
+  public List<VacancyWrapper> FixEmptyValue(List<VacancyWrapper> vacancies)
+  {
+    for (int i = 0; i < vacancies.Count; i++)
+    {
+      if (string.IsNullOrEmpty(vacancies[i].Vacancy.Views))
+      {
+        vacancies[i].Vacancy.Views = "0";
+      }
+    }
+    
+    return vacancies;
   }
 }
