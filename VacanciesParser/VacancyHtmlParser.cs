@@ -37,11 +37,13 @@ public class VacancyHtmlParser
           Timeout = 60000
         });
 
+        Console.WriteLine($"status response: {response.Status}");
+        
         if (response == null || response.Status != 200)
         {
           Console.WriteLine($"HTTP error: {response?.Status}");
           if (attempt == maxAttempts)
-            return null;
+            throw new Exception("vacancy page unavailable");
 
           await Task.Delay(3000);
           continue;
@@ -51,9 +53,9 @@ public class VacancyHtmlParser
 
         if (bodyText.Contains("Информация временно недоступна"))
         {
-          Console.WriteLine("page is unavalable");
+          Console.WriteLine("page is unavailable");
           if (attempt == maxAttempts)
-            return null;
+            throw new Exception("information unavailable");
 
           await Task.Delay(3000);
           continue;
@@ -75,7 +77,7 @@ public class VacancyHtmlParser
 
         Console.WriteLine("value not found");
         if (attempt == maxAttempts)
-          return null;
+          throw new Exception("vacancy page unavailable");
 
         await Task.Delay(2000);
       }

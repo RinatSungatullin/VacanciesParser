@@ -7,174 +7,6 @@ public class VacancyService
   private FileService fileService;
 
   private ProfessionalCategory professionalCategory;
-  
-  /*private Dictionary<string, List<string>> ProfessionalCategories = new Dictionary<string, List<string>>()
-  {
-    ["Руководители"] = new List<string>
-    {
-        "руководитель",
-        "начальник",
-        "заведующий",
-        "ведущий",
-        "директор",
-        "заместитель",
-        "глава",
-        "старший",
-        "мастер цеха",
-        "начальник отдела"
-    },
-
-    ["Специалисты высшего уровня"] = new List<string>
-    {
-        "врач",
-        "ветеринар",
-        "инженер",
-        "программист",
-        "системный администратор",
-        "юрисконсульт",
-        "специалист",
-        "инспектор",
-        "лесничий",
-        "муниципальный служащий",
-        "юрис",
-        "фармацевт",
-        "оценщик",
-        "энергетик",
-        "проектировщик",
-        "конструктор",
-        "электроник",
-        "бухгалтер",
-        "экономист",
-        "эколог",
-        "психолог",
-        "тьютор",
-        "учитель",
-        "преподаватель",
-        "эксперт",
-        "библиотек",
-        "дефектолог",
-        "логопед",
-        "фельдшер",
-        "лаборант",
-        "бухгалтер",
-        "микробиолог"
-    },
-
-    ["Специалисты среднего уровня"] = new List<string>
-    {
-        "администратор",
-        "продавец",
-        "консультант",
-        "педагог",
-        "преподаватель",
-        "воспитатель",
-        "помощник воспитателя",
-        "младший воспитатель",
-        "инструктор",
-        "тренер",
-        "массажист",
-        "медицинская сестра",
-        "медицинский брат",
-        "медицинский регистратор",
-        "кондуктор",
-        "токарь",
-        "воспитат",
-        "кондитер",
-        "гример",
-        "стрелок",
-        "экскурсовод",
-        "экспозицион",
-        "кассир",
-        "портье",
-        "диспетчер",
-        "товаровед",
-        "оператор видеонаблюдения",
-        "документовед",
-        "социальный работник",
-        "кладовщик",
-        "дежурный",
-        "советник"
-    },
-
-    ["Рабочие промышленности, строительства, транспорта"] = new List<string>
-    {
-        "слесарь",
-        "электромонтер",
-        "электромеханик",
-        "электрик",
-        "электромонтажник",
-        "техник",
-        "технолог",
-        "повар",
-        "пекарь",
-        "рабочий",
-        "подсобный",
-        "разнорабочий",
-        "работник",
-        "мастер",
-        "водитель",
-        "грузчик",
-        "кочегар",
-        "приемщик",
-        "паяльщик",
-        "промывщик",
-        "бурильщик",
-        "правильщик",
-        "полировщик",
-        "сварщик",
-        "электрогазосварщик",
-        "фрезеровщик",
-        "сверловщик",
-        "монтажник",
-        "маркировщик",
-        "мойщик",
-        "тракторист",
-        "сборщик",
-        "укладчик",
-        "плотник",
-        "термист",
-        "срезчик",
-        "швейного",
-        "пожарный",
-        "штукатур",
-        "маляр",
-        "монтер",
-        "обработчик",
-        "прораб",
-        "производитель работ",
-        "погрузчик",
-        "скважин"
-    },
-
-    ["Операторы, аппаратчики, машинисты"] = new List<string>
-    {
-        "оператор",
-        "машинист",
-        "аппаратчик",
-        "наладчик",
-        "котельной",
-        "машинного доения",
-        "станка",
-        "установки",
-        "экскаватор"
-    },
-
-    ["Неквалифицированные рабочие"] = new List<string>
-    {
-        "охранник",
-        "сторож",
-        "вахтер",
-        "дворник",
-        "уборщик",
-        "уборщица",
-        "санитар",
-        "санитарка",
-        "упаковщик",
-        "укладчик-упаковщик",
-        "гардеробщик",
-        "подсобный рабочий"
-    }
-  };*/
 
   public VacancyService()
   {
@@ -195,15 +27,24 @@ public class VacancyService
       var currentVacancyUrl = vacancies[i].Vacancy.Url;
 
       Console.WriteLine($"vacancy id: {vacancies[i].Vacancy.Id}");
-      
-      string vacancyView = await parser.GetValueByKey(currentVacancyUrl, "Просмотры вакансии");
 
-      if (!string.IsNullOrEmpty(vacancyView))
+      try
       {
-        vacancies[i].Vacancy.Views = vacancyView;
-      }
+        string vacancyView = await parser.GetValueByKey(currentVacancyUrl, "Просмотры вакансии");
+
+        if (!string.IsNullOrEmpty(vacancyView))
+        {
+          vacancies[i].Vacancy.Views = vacancyView;
+        }
       
-      Console.WriteLine($"views:{vacancies[i].Vacancy.Views}");
+        Console.WriteLine($"views:{vacancies[i].Vacancy.Views}");
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine(e.Message);
+        
+        vacancies.RemoveAt(i);
+      }
     }
     
     return vacancies;
@@ -233,7 +74,16 @@ public class VacancyService
   {
     string[] vacancySplit = line.Split(';');
 
-    int averageSalary = (int.Parse(vacancySplit[2]) + int.Parse(vacancySplit[3])) / 2;
+    int averageSalary = 0;
+    
+    if (int.Parse(vacancySplit[3]) == 0)
+    {
+      averageSalary = int.Parse(vacancySplit[2]);
+    }
+    else
+    {
+      averageSalary = (int.Parse(vacancySplit[2]) + int.Parse(vacancySplit[3])) / 2;
+    }
     
     int vacancyView = int.Parse(vacancySplit[7]);
 
