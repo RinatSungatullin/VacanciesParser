@@ -151,9 +151,9 @@ public class ProfessionalCategory
         "гардеробщик"
     }
   };
-
-  public Dictionary<string, List<string>> GetProfessionalCategories()
-  {
-      return this.ProfessionalCategories;
-  }
+  
+    public Dictionary<string, List<string>> GetProfessionalCategories()
+    {
+        return this.ProfessionalCategories;
+    }
 }
