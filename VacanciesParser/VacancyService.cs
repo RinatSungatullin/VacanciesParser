@@ -2,11 +2,13 @@ using Microsoft.Playwright;
 
 namespace VacanciesParser;
 
-public class ParserService
+public class VacancyService
 {
   private FileService fileService;
+
+  private ProfessionalCategory professionalCategory;
   
-  private Dictionary<string, List<string>> ProfessionalCategories = new Dictionary<string, List<string>>()
+  /*private Dictionary<string, List<string>> ProfessionalCategories = new Dictionary<string, List<string>>()
   {
     ["Руководители"] = new List<string>
     {
@@ -154,9 +156,9 @@ public class ParserService
         "укладчик-упаковщик",
         "гардеробщик"
     }
-  };
+  };*/
 
-  public ParserService()
+  public VacancyService()
   {
     this.fileService = new FileService();
   }
@@ -164,7 +166,7 @@ public class ParserService
   public async Task<List<VacancyWrapper>> JoinVacancyViewAndResult(List<VacancyWrapper> vacancies)
   {
     Console.WriteLine("parsing html");
-    HtmlParser parser = new HtmlParser();
+    VacancyHtmlParser parser = new VacancyHtmlParser();
 
     for (int i = 0; i < vacancies.Count; i++)
     {
@@ -219,7 +221,7 @@ public class ParserService
 
   private string GetProfessionalGroup(string vacancyName)
   {
-    foreach (var p in  ProfessionalCategories)
+    foreach (var p in  this.professionalCategory.GetProfessionalCategories())
     {
       foreach (var c in p.Value)
       {
@@ -230,7 +232,7 @@ public class ParserService
       }
     }
     
-    foreach (var p in  ProfessionalCategories)
+    foreach (var p in  this.professionalCategory.GetProfessionalCategories())
     {
       foreach (var c in p.Value)
       {
@@ -253,7 +255,7 @@ public class ParserService
   {
     var result = new List<VacancyStatistic>();
 
-    foreach (var kvp in this.ProfessionalCategories)
+    foreach (var kvp in this.professionalCategory.GetProfessionalCategories())
     {
       string groupName = kvp.Key;
 

@@ -4,7 +4,7 @@ using Microsoft.Playwright;
 
 namespace VacanciesParser;
 
-public class HtmlParser
+public class VacancyHtmlParser
 {
   public async Task<string> GetValueByKey(string htmlUrl, string keyValue)
   {
