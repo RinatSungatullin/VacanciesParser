@@ -7,7 +7,6 @@ public class ResumeHtmlParser
 {
   public async Task<List<Resume>> ParseResume(List<Resume> resumeList, string htmlUrl)
   {
-
     using var playwright = await Playwright.CreateAsync();
 
     var browser = await playwright.Chromium.LaunchAsync(new()

@@ -36,7 +36,7 @@ class Program
     // запись диаграммы
     WriteDiagrams(vacancyStatistics, baseFilePath);*/
 
-    string resumeUrl = "https://trudvsem.ru/cv/search?_regionIds=1800000000000&page=0&salary=0&salary=999999&experience=EXP_STAFF&cvType=LONG";
+    /*string resumeUrl = "https://trudvsem.ru/cv/search?_regionIds=1800000000000&page=0&salary=0&salary=999999&experience=EXP_STAFF&cvType=LONG";
 
     ResumeService resumeService = new ResumeService();
     
@@ -49,7 +49,7 @@ class Program
       Console.WriteLine($"group: {r.ProfessionalGroupName}");
       
       Console.WriteLine($"salary: {r.Salary}\n");
-    }
+    }*/
   }
 
   private static Task<string> GetVacanciesJson(string url)
