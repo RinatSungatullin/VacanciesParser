@@ -5,9 +5,9 @@ namespace VacanciesParser;
 
 public class ResumeHtmlParser
 {
-  public async Task<List<Resume>> ParseResume(string htmlUrl)
+  public async Task<List<Resume>> ParseResume(List<Resume> resumeList, string htmlUrl)
   {
-    var result = new List<Resume>();
+    //var resumeList = new List<Resume>();
 
     using var playwright = await Playwright.CreateAsync();
 
@@ -75,7 +75,7 @@ public class ResumeHtmlParser
         int.TryParse(digits, out salary);
       }
 
-      result.Add(new Resume
+      resumeList.Add(new Resume
       {
         JobName = name,
         Salary = salary
@@ -84,6 +84,6 @@ public class ResumeHtmlParser
 
     await browser.CloseAsync();
 
-    return result;
+    return resumeList;
   }
 }

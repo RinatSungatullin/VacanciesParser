@@ -87,34 +87,7 @@ public class VacancyService
     
     int vacancyView = int.Parse(vacancySplit[7]);
 
-    return new VacancyStatisticSample(GetProfessionalGroup(vacancySplit[1]), averageSalary, vacancyView);
-  }
-
-  private string GetProfessionalGroup(string vacancyName)
-  {
-    foreach (var p in  this.professionalCategory.GetProfessionalCategories())
-    {
-      foreach (var c in p.Value)
-      {
-        if (c == vacancyName.ToLower())
-        {
-          return p.Key;
-        }
-      }
-    }
-    
-    foreach (var p in  this.professionalCategory.GetProfessionalCategories())
-    {
-      foreach (var c in p.Value)
-      {
-        if (vacancyName.ToLower().Contains(c))
-        {
-          return p.Key;
-        }
-      }
-    }
-    
-    return null;
+    return new VacancyStatisticSample(this.professionalCategory.GetProfessionalGroupByJobName(vacancySplit[1]), averageSalary, vacancyView);
   }
 
   public void WriteVacanciesToCsv(List<VacancyWrapper> vacancies, string vacanciesFilePath, string fileName)

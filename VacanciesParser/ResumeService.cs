@@ -2,11 +2,22 @@ namespace VacanciesParser;
 
 public class ResumeService
 {
-  public async Task GetResume(string html)
+  private ProfessionalCategory professionalCategory;
+
+  public ResumeService()
+  {
+    this.professionalCategory = new ProfessionalCategory();
+  }
+  
+  public async Task GetResume(string htmlUrl)
   {
     ResumeHtmlParser  parser = new ResumeHtmlParser();
+
+    List<Resume> resumeList = new List<Resume>();
     
-    var resumeList = await parser.ParseResume(html);
+    await parser.ParseResume(resumeList, htmlUrl);
+    
+    // var resumeList = await parser.ParseResume(html);
 
     foreach (var r in resumeList)
     {
@@ -15,5 +26,12 @@ public class ResumeService
     }
 
     Console.WriteLine($"всего резюме: {resumeList.Count}");
+  }
+
+  private string SetProfessionalGroup(string jobName)
+  {
+    
+    
+    return "";
   }
 }
