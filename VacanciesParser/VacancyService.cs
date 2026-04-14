@@ -44,6 +44,8 @@ public class VacancyService
         Console.WriteLine(e.Message);
         
         vacancies.RemoveAt(i);
+
+        i--;
       }
     }
     

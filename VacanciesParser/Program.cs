@@ -4,7 +4,7 @@ class Program
 {
   static async Task Main(string[] args)
   {
-    /*VacancyService vacancyService = new VacancyService();
+    VacancyService vacancyService = new VacancyService();
     
     string baseFilePath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/Downloads";
     
@@ -34,9 +34,9 @@ class Program
     vacancyService.WriteSummaryTableToCsv(vacancyStatistics, vacanciesStatisticTablePath);
     
     // запись диаграммы
-    WriteDiagrams(vacancyStatistics, baseFilePath);*/
+    WriteDiagrams(vacancyStatistics, baseFilePath);
 
-    /*string resumeUrl = "https://trudvsem.ru/cv/search?_regionIds=1800000000000&page=0&salary=0&salary=999999&experience=EXP_STAFF&cvType=LONG";
+    string resumeUrl = "https://trudvsem.ru/cv/search?_regionIds=1800000000000&page=0&salary=0&salary=999999&experience=EXP_STAFF&cvType=LONG";
 
     ResumeService resumeService = new ResumeService();
     
@@ -49,7 +49,7 @@ class Program
       Console.WriteLine($"group: {r.ProfessionalGroupName}");
       
       Console.WriteLine($"salary: {r.Salary}\n");
-    }*/
+    }
   }
 
   private static Task<string> GetVacanciesJson(string url)
