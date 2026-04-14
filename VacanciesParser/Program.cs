@@ -42,14 +42,30 @@ class Program
     
     var resumeList = await resumeService.GetResume(resumeUrl);
 
-    foreach (var r in resumeList)
+    var resumeStatistic = resumeService.GetResumeStatistic(resumeList);
+
+    var summaryStatistics = GetSummaryStatistic(vacancyStatistics, resumeStatistic);
+
+    foreach (var s in summaryStatistics)
     {
-      Console.WriteLine($"job name: {r.JobName}");
+      Console.WriteLine($"professional group: {s.ProfessionalGroup}");
       
-      Console.WriteLine($"group: {r.ProfessionalGroupName}");
+      Console.WriteLine($"vacancy quantity: {s.VacancyQuantity}");
       
-      Console.WriteLine($"salary: {r.Salary}\n");
+      Console.WriteLine($"vacancy salary: {s.VacancyAverageSalary}");
+      Console.WriteLine($"vacancy views: {s.VacancyViews}");
+      Console.WriteLine($"resume quantity: {s.ResumeQuantity}");
+      Console.WriteLine($"resume salary: {s.ResumeAverageSalary}");
+
+      Console.WriteLine();
     }
+    
+    /*foreach (var r in resumeStatistic)
+    {
+      Console.WriteLine($"professional group: {r.ProfessionalGroupName}");
+      Console.WriteLine($"vacancies quantity: {r.Quantity}");
+      Console.WriteLine($"average salary: {r.AverageSalary}");
+    }*/
   }
 
   private static Task<string> GetVacanciesJson(string url)
@@ -72,5 +88,54 @@ class Program
     
     ds.WriteVacanciesCircleDiagram(vacancyStatistics, filePath);
     ds.WriteSalaryLineDiagram(vacancyStatistics, filePath);
+  }
+
+  private static List<SummaryStatistic> GetSummaryStatistic(List<VacancyStatistic> vacancies,
+    List<ResumeStatistic> resumes)
+  {
+    var resumeData = resumes
+      .GroupBy(x => x.ProfessionalGroupName)
+      .ToDictionary(
+        g => g.Key,
+        g => new
+        {
+          Quantity = g.Sum(x => x.Quantity),
+          AvgSalary = g.Any(x => x.AverageSalary > 0)
+            ? (int)g.Average(x => x.AverageSalary)
+            : 0
+        });
+
+    var vacancyData = vacancies
+      .GroupBy(x => x.ProfessionalGroup)
+      .ToDictionary(
+        g => g.Key,
+        g => new
+        {
+          Quantity = g.Sum(x => x.Quantity),
+          AvgSalary = g.Any(x => x.AverageSalary > 0)
+            ? (int)g.Average(x => x.AverageSalary)
+            : 0,
+          Views = g.Sum(x => x.Views)
+        });
+
+    var allKeys = resumeData.Keys
+      .Union(vacancyData.Keys);
+
+    return allKeys
+      .Select(key =>
+      {
+        resumeData.TryGetValue(key, out var r);
+        vacancyData.TryGetValue(key, out var v);
+
+        return new SummaryStatistic(
+          key,
+          r?.Quantity ?? 0,
+          r?.AvgSalary ?? 0,
+          v?.Quantity ?? 0,
+          v?.AvgSalary ?? 0,
+          v?.Views ?? 0
+        );
+      })
+      .ToList();
   }
 }
