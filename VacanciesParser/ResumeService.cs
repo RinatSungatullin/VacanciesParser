@@ -33,6 +33,21 @@ public class ResumeService
     return resumeList;
   }
 
+  public List<ResumeStatistic> GetResumeStatistic(List<Resume> resumes)
+  {
+    return resumes
+      .Where(x => !string.IsNullOrWhiteSpace(x.ProfessionalGroupName))
+      .GroupBy(x => x.ProfessionalGroupName)
+      .Select(g => new ResumeStatistic(
+        g.Key,
+        g.Count(),
+        g.Any(x => x.Salary > 0)
+          ? (int)g.Where(x => x.Salary > 0).Average(x => x.Salary)
+          : 0
+      ))
+      .ToList();
+  }
+
   private string SetProfessionalGroup(string jobName)
   {
     var name = this.professionalCategory.GetProfessionalGroupByJobName(jobName);
