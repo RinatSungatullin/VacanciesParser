@@ -121,7 +121,7 @@ public class VacancyService
     return result;
   }
 
-  public void WriteSummaryTableToCsv(List<VacancyStatistic>vacanciesStatistic,
+  /*public void WriteSummaryTableToCsv(List<VacancyStatistic>vacanciesStatistic,
                                       string vacancyStatisticFullPath)
   {
     VacancyStatisticCalculator statisticCalculator = new VacancyStatisticCalculator(
@@ -131,9 +131,22 @@ public class VacancyService
       );
     
     this.fileService.WriteSummaryTableToCsv(vacanciesStatistic, statisticCalculator, vacancyStatisticFullPath);
+  }*/
+
+  public void WriteSummaryTableToCsv(List<SummaryStatistic> statistic, string vacancyStatisticFullPath)
+  {
+    VacancyStatisticCalculator statisticCalculator = new VacancyStatisticCalculator(
+      statistic.Sum(x => x.VacancyQuantity),
+      Math.Round(statistic.Average(x => x.ResumeAverageSalary), 2),
+      statistic.Sum(x => x.VacancyViews),
+      statistic.Sum(x => x.ResumeQuantity),
+      Math.Round(statistic.Average(x => x.ResumeAverageSalary), 2)
+    );
+    
+    this.fileService.WriteSummaryTableToCsv(statistic, statisticCalculator, vacancyStatisticFullPath);
   }
 
-  public List<VacancyWrapper> FixEmptyValue(List<VacancyWrapper> vacancies)
+  /*public List<VacancyWrapper> FixEmptyValue(List<VacancyWrapper> vacancies)
   {
     for (int i = 0; i < vacancies.Count; i++)
     {
@@ -144,5 +157,5 @@ public class VacancyService
     }
     
     return vacancies;
-  }
+  }*/
 }

@@ -42,14 +42,16 @@ public class FileService
     return lines;
   }
 
-  public void WriteSummaryTableToCsv(List<VacancyStatistic> vacancies, VacancyStatisticCalculator statisticCalculator, string fullPath)
+  public void WriteSummaryTableToCsv(List<SummaryStatistic> statistic, VacancyStatisticCalculator statisticCalculator, string fullPath)
   {
     using (StreamWriter sw = new StreamWriter(fullPath, false, Encoding.UTF8))
     {
-      sw.WriteLine("Профессиональная группа;Количество заявленных вакансий;Средняя заработная плата;количество просмотров соискателями");
-      foreach (var v in vacancies)
+      sw.WriteLine("Профессиональная группа;Количество заявленных вакансий;Средняя заработная плата;количество просмотров соискателями;" +
+                   "Количество размещенных резюме;Средняя желаемая заработная плата");
+      foreach (var v in statistic)
       {
-        sw.WriteLine($"{v.ProfessionalGroup};{v.Quantity};{v.AverageSalary};{v.Views}");
+        sw.WriteLine($"{v.ProfessionalGroup};{v.VacancyQuantity};{v.VacancyAverageSalary};{v.VacancyViews};" +
+                     $"{v.VacancyQuantity};{v.ResumeAverageSalary};");
       }
       
       sw.WriteLine($"Итог;{statisticCalculator.TotalVacancies};{statisticCalculator.TotalSalaryAverage};{statisticCalculator.TotalViews}");

@@ -30,9 +30,6 @@ class Program
 
     List<VacancyStatistic> vacancyStatistics = vacancyService.CalculateVacancyStatistic(vacancyStatisticSamples);
     
-    // запись итоговой таблицы
-    vacancyService.WriteSummaryTableToCsv(vacancyStatistics, vacanciesStatisticTablePath);
-    
     // запись диаграммы
     WriteDiagrams(vacancyStatistics, baseFilePath);
 
@@ -46,6 +43,9 @@ class Program
 
     var summaryStatistics = GetSummaryStatistic(vacancyStatistics, resumeStatistic);
 
+     // запись итоговой таблицы
+        vacancyService.WriteSummaryTableToCsv(summaryStatistics, vacanciesStatisticTablePath);
+    
     foreach (var s in summaryStatistics)
     {
       Console.WriteLine($"professional group: {s.ProfessionalGroup}");

@@ -11,7 +11,7 @@ public class ResumeHtmlParser
 
     var browser = await playwright.Chromium.LaunchAsync(new()
     {
-      Headless = false
+      Headless = true
     });
 
     var page = await browser.NewPageAsync();
