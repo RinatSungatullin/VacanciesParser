@@ -47,14 +47,15 @@ public class FileService
     using (StreamWriter sw = new StreamWriter(fullPath, false, Encoding.UTF8))
     {
       sw.WriteLine("Профессиональная группа;Количество заявленных вакансий;Средняя заработная плата;количество просмотров соискателями;" +
-                   "Количество размещенных резюме;Средняя желаемая заработная плата");
+                   "Количество размещенных резюме;Средняя желаемая заработная плата;Напряженность на рынке труда");
       foreach (var v in statistic)
       {
         sw.WriteLine($"{v.ProfessionalGroup};{v.VacancyQuantity};{v.VacancyAverageSalary};{v.VacancyViews};" +
                      $"{v.VacancyQuantity};{v.ResumeAverageSalary};");
       }
       
-      sw.WriteLine($"Итог;{statisticCalculator.TotalVacancies};{statisticCalculator.TotalSalaryAverage};{statisticCalculator.TotalViews}");
+      sw.WriteLine($"Итог;{statisticCalculator.TotalVacancies};{statisticCalculator.TotalSalaryAverage};{statisticCalculator.TotalViews};" +
+                   $"{statisticCalculator.TotalResume};{statisticCalculator.AverageSalaryResume}");
     }
   }
 }

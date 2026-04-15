@@ -20,7 +20,7 @@ public class ResumeHtmlParser
 
     await page.WaitForSelectorAsync(".search-results-simple-card");
 
-    for (int i = 1; i < 10; i++)
+    for (int i = 1; i <= 9; i++)
     {
       Console.WriteLine($"page: {i}");
 
@@ -72,6 +72,9 @@ public class ResumeHtmlParser
         var digits = new string(salaryText.Where(char.IsDigit).ToArray());
         int.TryParse(digits, out salary);
       }
+
+      Console.WriteLine($"resume job name: {name}\n" +
+                        $"resume salary:{salary}");
 
       resumeList.Add(new Resume
       {

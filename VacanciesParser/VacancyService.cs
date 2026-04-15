@@ -137,7 +137,7 @@ public class VacancyService
   {
     VacancyStatisticCalculator statisticCalculator = new VacancyStatisticCalculator(
       statistic.Sum(x => x.VacancyQuantity),
-      Math.Round(statistic.Average(x => x.ResumeAverageSalary), 2),
+      Math.Round(statistic.Average(x => x.VacancyAverageSalary), 2),
       statistic.Sum(x => x.VacancyViews),
       statistic.Sum(x => x.ResumeQuantity),
       Math.Round(statistic.Average(x => x.ResumeAverageSalary), 2)

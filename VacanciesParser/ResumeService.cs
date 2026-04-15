@@ -17,11 +17,11 @@ public class ResumeService
     
     await parser.ParseResume(resumeList, htmlUrl);
     
-    /*foreach (var r in resumeList)
+    foreach (var r in resumeList)
     {
       Console.WriteLine($"job name: {r.JobName}");
       Console.WriteLine($"salary: {r.Salary}\n");
-    }*/
+    }
 
     Console.WriteLine($"всего резюме: {resumeList.Count}");
 
