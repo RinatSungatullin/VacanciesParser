@@ -42,7 +42,7 @@ public class FileService
     return lines;
   }
 
-  public void WriteSummaryTableToCsv(List<SummaryStatistic> statistic, VacancyStatisticCalculator statisticCalculator, string fullPath)
+  public void WriteSummaryTableToCsv(List<SummaryStatistic> statistic, SummaryStatisticCalculator statisticCalculator, string fullPath)
   {
     using (StreamWriter sw = new StreamWriter(fullPath, false, Encoding.UTF8))
     {
@@ -51,11 +51,11 @@ public class FileService
       foreach (var v in statistic)
       {
         sw.WriteLine($"{v.ProfessionalGroup};{v.VacancyQuantity};{v.VacancyAverageSalary};{v.VacancyViews};" +
-                     $"{v.VacancyQuantity};{v.ResumeAverageSalary};");
+                     $"{v.VacancyQuantity};{v.ResumeAverageSalary};{v.Intensity}");
       }
       
       sw.WriteLine($"Итог;{statisticCalculator.TotalVacancies};{statisticCalculator.TotalSalaryAverage};{statisticCalculator.TotalViews};" +
-                   $"{statisticCalculator.TotalResume};{statisticCalculator.AverageSalaryResume}");
+                   $"{statisticCalculator.TotalResume};{statisticCalculator.AverageSalaryResume};{statisticCalculator.AverageIntensity}");
     }
   }
 }

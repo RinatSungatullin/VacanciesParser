@@ -10,6 +10,8 @@ public class SummaryStatistic
   public int VacancyQuantity { get; set; }
   public int VacancyAverageSalary { get; set; }
   public int VacancyViews { get; set; }
+  
+  public double Intensity { get; }
 
   public SummaryStatistic(
     string professionalGroup,
@@ -27,5 +29,7 @@ public class SummaryStatistic
     VacancyQuantity = vacancyQuantity;
     VacancyAverageSalary = vacancyAverageSalary;
     VacancyViews = vacancyViews;
+
+    this.Intensity = resumeQuantity / vacancyQuantity;
   }
 }

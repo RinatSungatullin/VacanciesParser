@@ -135,12 +135,13 @@ public class VacancyService
 
   public void WriteSummaryTableToCsv(List<SummaryStatistic> statistic, string vacancyStatisticFullPath)
   {
-    VacancyStatisticCalculator statisticCalculator = new VacancyStatisticCalculator(
+    SummaryStatisticCalculator statisticCalculator = new SummaryStatisticCalculator(
       statistic.Sum(x => x.VacancyQuantity),
       Math.Round(statistic.Average(x => x.VacancyAverageSalary), 2),
       statistic.Sum(x => x.VacancyViews),
       statistic.Sum(x => x.ResumeQuantity),
-      Math.Round(statistic.Average(x => x.ResumeAverageSalary), 2)
+      Math.Round(statistic.Average(x => x.ResumeAverageSalary), 2),
+      Math.Round((statistic.Average(x => x.Intensity)), 2)
     );
     
     this.fileService.WriteSummaryTableToCsv(statistic, statisticCalculator, vacancyStatisticFullPath);

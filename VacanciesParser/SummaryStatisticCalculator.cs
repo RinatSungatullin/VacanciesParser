@@ -1,6 +1,6 @@
 namespace VacanciesParser;
 
-public class VacancyStatisticCalculator
+public class SummaryStatisticCalculator
 {
   public int TotalVacancies { get; set; }
   
@@ -11,9 +11,11 @@ public class VacancyStatisticCalculator
   public int TotalResume { get; set; }
   
   public double AverageSalaryResume { get; set; }
+  
+  public double AverageIntensity { get; set; }
 
-  public VacancyStatisticCalculator(int totalVacancies, double totalSalaryAverage, int totalViews,
-                                    int totalResume, double averageSalaryResume)
+  public SummaryStatisticCalculator(int totalVacancies, double totalSalaryAverage, int totalViews,
+                                    int totalResume, double averageSalaryResume, double averageIntensity)
   {
     this.TotalVacancies = totalVacancies;
     
@@ -24,5 +26,7 @@ public class VacancyStatisticCalculator
     this.TotalResume = totalResume;
     
     this.AverageSalaryResume = averageSalaryResume;
+    
+    this.AverageIntensity = averageIntensity;
   }
 }
