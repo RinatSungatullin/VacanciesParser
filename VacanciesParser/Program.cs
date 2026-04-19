@@ -23,10 +23,12 @@ class Program
     // получение вакансии json из api
     /*string vacanciesJSON = await GetVacanciesJson(apiUrl);
 
-    List<VacancyWrapper> vacancies = DeserializeVacancies(vacanciesJSON);
-
+    List<VacancyWrapper> vacanciesWrapper = DeserializeVacancies(vacanciesJSON);
+    
     // Получение просмотров вакансий из html
-    vacancies = await vacancyService.JoinVacancyView(vacancies);*/
+    vacanciesWrapper = await vacancyService.JoinVacancyView(vacanciesWrapper);
+    
+    List<Vacancy> vacancies = MapToVacancies(vacanciesWrapper);*/
     
     // Получение вакансий из html
     List<Vacancy> vacancies = await vacancyService.GetVacancyFromPage(vacancyHtmlUrl);
@@ -59,36 +61,6 @@ class Program
      // запись итоговой таблицы
      vacancyService.WriteSummaryTableToCsv(summaryStatistics, summaryStatisticTablePath);
      Console.WriteLine($"summary statistic saved to: {summaryStatisticTablePath}");
-    
-    /*foreach (var s in summaryStatistics)
-    {
-      Console.WriteLine($"professional group: {s.ProfessionalGroup}");
-      
-      Console.WriteLine($"vacancy quantity: {s.VacancyQuantity}");
-      
-      Console.WriteLine($"vacancy salary: {s.VacancyAverageSalary}");
-      Console.WriteLine($"vacancy views: {s.VacancyViews}");
-      Console.WriteLine($"resume quantity: {s.ResumeQuantity}");
-      Console.WriteLine($"resume salary: {s.ResumeAverageSalary}");
-
-      Console.WriteLine();
-    }*/
-    
-
-    /*foreach (var v in vacancies)
-    {
-      Console.WriteLine($"vacancy id: {v.Id}");
-      Console.WriteLine($"vacancy name: {v.JobName}");
-      Console.WriteLine($"salary from: {v.SalaryMin}");
-      Console.WriteLine($"salary to: {v.SalaryMax}");
-      Console.WriteLine($"url: {v.Url}");
-      Console.WriteLine($"specialization: {v.Category.Specialisation}");
-      Console.WriteLine($"education: {v.Requirement.Education}");
-      Console.WriteLine($"views: {v.Views}");
-      Console.WriteLine();
-    }*/
-    
-    //Console.WriteLine($"{vacancies.Count} vacancies");
   }
 
   private static Task<string> GetVacanciesJson(string url)
@@ -159,6 +131,14 @@ class Program
           v?.Views ?? 0
         );
       })
+      .ToList();
+  }
+  
+  private static List<Vacancy> MapToVacancies(List<VacancyWrapper> wrappers)
+  {
+    return wrappers
+      .Where(w => w.Vacancy != null)
+      .Select(w => w.Vacancy)
       .ToList();
   }
 }
