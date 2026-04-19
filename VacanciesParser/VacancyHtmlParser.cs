@@ -6,6 +6,13 @@ namespace VacanciesParser;
 
 public class VacancyHtmlParser
 {
+  /// <summary>
+  /// Поулчить просмотры вакансии
+  /// </summary>
+  /// <param name="htmlUrl">Ссылка на вакансию</param>
+  /// <param name="keyValue">Блок просмотров из html</param>
+  /// <returns>Значение просмотров</returns>
+  /// <exception cref="Exception">Страница не доуступна</exception>
   public async Task<string> GetValueByKey(string htmlUrl, string keyValue)
   {
     using var playwright = await Playwright.CreateAsync();
@@ -81,5 +88,257 @@ public class VacancyHtmlParser
     }
 
     return null;
+  }
+
+  /// <summary>
+  /// Получить вакансии из html по url.
+  /// </summary>
+  /// <param name="htmlUrl">Ссылка на вакансии.</param>
+  /// <returns>Коллексция ссылок вакансий.</returns>
+  public async Task<List<string>> GetVacancyLinks(string htmlUrl)
+  {
+    using var playwright = await Playwright.CreateAsync();
+
+    var browser = await playwright.Chromium.LaunchAsync(new()
+    {
+      Headless = false
+    });
+
+    var page = await browser.NewPageAsync();
+
+    await page.GotoAsync(htmlUrl);
+    await page.WaitForSelectorAsync(".search-results-simple-card");
+
+    // -------------------------
+    // ДОГРУЗКА 9 РАЗ (10 + 90 = 100)
+    // -------------------------
+    for (int i = 0; i < 9; i++)
+    {
+      var button = page.Locator("button[data-action='append']");
+
+      if (await button.CountAsync() == 0)
+        break;
+
+      int before = await page.Locator(".search-results-simple-card").CountAsync();
+
+      await button.ScrollIntoViewIfNeededAsync();
+      await button.ClickAsync();
+
+      try
+      {
+        await page.WaitForFunctionAsync(
+          $"document.querySelectorAll('.search-results-simple-card').length > {before}"
+        );
+      }
+      catch
+      {
+        break;
+      }
+    }
+
+    // -------------------------
+    // 1. СОБИРАЕМ МАССИВ ССЫЛОК
+    // -------------------------
+    var cards = page.Locator(".search-results-simple-card");
+    int count = await cards.CountAsync();
+
+    if (count > 100)
+      count = 100;
+
+    var links = new List<string>(count);
+
+    for (int i = 0; i < count; i++)
+    {
+      var card = cards.Nth(i);
+
+      var link = card.Locator("a.search-results-simple-card__go-to-button");
+
+      if (await link.CountAsync() == 0)
+        continue;
+
+      var href = await link.First.GetAttributeAsync("href");
+
+      if (string.IsNullOrWhiteSpace(href))
+        continue;
+
+      string fullUrl = href.StartsWith("/")
+        ? new Uri(new Uri(page.Url), href).ToString()
+        : href;
+
+      links.Add(fullUrl);
+    }
+
+    Console.WriteLine($"Собрано ссылок: {links.Count}");
+
+    // -------------------------
+    // 2. ПЕРЕХОД ПО КАЖДОЙ В НОВОМ РЕЖИМЕ (БЕЗ GO BACK)
+    // -------------------------
+
+    int vacancyCounter = 1;
+
+    foreach (var url in links)
+    {
+      Console.WriteLine($"\nvacancy {vacancyCounter}");
+
+      Console.WriteLine($"Переход: {url}");
+
+      try
+      {
+        await page.GotoAsync(url);
+        await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
+
+        Console.WriteLine($"Открыта вакансия: {page.Url}");
+
+        // TODO: парсинг вакансии
+      }
+      catch (Exception ex)
+      {
+        Console.WriteLine($"Ошибка: {ex.Message}");
+      }
+
+      vacancyCounter++;
+    }
+
+    await browser.CloseAsync();
+
+    return links;
+  }
+
+  /// <summary>
+  /// Получить колекцию Vacancy из страницы по url.
+  /// </summary>
+  /// <param name="urls">Коллекция ссылок.</param>
+  /// <returns>Коллекция Vacancy.</returns>
+  public async Task<List<Vacancy>> GetVacancyListByUrl(List<string> urls)
+  {
+    using var playwright = await Playwright.CreateAsync();
+
+    var browser = await playwright.Chromium.LaunchAsync(new()
+    {
+        Headless = false
+    });
+
+    var page = await browser.NewPageAsync();
+
+    var result = new List<Vacancy>();
+
+    foreach (var url in urls)
+    {
+        try
+        {
+            await page.GotoAsync(url);
+            await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
+
+            // -------------------------
+            // ID из URL
+            // -------------------------
+            var id = url.Split('/').Last();
+
+            // -------------------------
+            // JOB NAME
+            // -------------------------
+            var jobName = "не указано";
+
+            var jobLocator = page.Locator("h1.content__title");
+            if (await jobLocator.CountAsync() > 0)
+                jobName = (await jobLocator.InnerTextAsync()).Trim();
+
+            // -------------------------
+            // SALARY (ИСПРАВЛЕННЫЙ БЛОК)
+            // -------------------------
+            int salaryMin = 0;
+            int salaryMax = 0;
+
+            var salaryLocator = page.Locator(".vacancy-sidebar__price");
+
+            if (await salaryLocator.CountAsync() > 0)
+            {
+                var salaryText = await salaryLocator.InnerTextAsync();
+
+                salaryText = salaryText
+                    .Replace("\u00A0", " ")
+                    .Trim();
+
+                var numbers = Regex
+                    .Matches(salaryText, @"\d[\d\s]*")
+                    .Select(m => int.Parse(m.Value.Replace(" ", "")))
+                    .ToList();
+
+                if (numbers.Count > 0)
+                    salaryMin = numbers[0];
+
+                if (numbers.Count > 1)
+                    salaryMax = numbers[1];
+            }
+
+            // -------------------------
+            // CATEGORY (СФЕРА ДЕЯТЕЛЬНОСТИ)
+            // -------------------------
+            string category = "не указано";
+
+            var categoryLocator = page.Locator("dt:has-text('Сфера деятельности:') + dd");
+
+            if (await categoryLocator.CountAsync() > 0)
+                category = (await categoryLocator.InnerTextAsync()).Trim();
+
+            // -------------------------
+            // EDUCATION
+            // -------------------------
+            string education = "не указано";
+
+            var eduLocator = page.Locator("dt:has-text('Образование:') + dd");
+
+            if (await eduLocator.CountAsync() > 0)
+                education = (await eduLocator.InnerTextAsync()).Trim();
+
+            // -------------------------
+            // VIEWS (ИСПРАВЛЕННЫЙ БЛОК)
+            // -------------------------
+            int views = 0;
+
+            var viewsLocator = page.Locator("dd[data-content='views']");
+
+            if (await viewsLocator.CountAsync() > 0)
+            {
+                var viewsText = await viewsLocator.InnerTextAsync();
+                int.TryParse(viewsText?.Trim(), out views);
+            }
+
+            // -------------------------
+            // RESULT OBJECT
+            // -------------------------
+            var vacancy = new Vacancy
+            {
+                Id = id,
+                JobName = jobName,
+                SalaryMin = salaryMin,
+                SalaryMax = salaryMax,
+                Url = url,
+                Views = views.ToString(),
+
+                Category = new Category
+                {
+                    Specialisation = category
+                },
+
+                Requirement = new Requirement
+                {
+                    Education = education
+                }
+            };
+
+            result.Add(vacancy);
+
+            Console.WriteLine($"OK: {jobName}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"ERROR {url}: {ex.Message}");
+        }
+    }
+
+    await browser.CloseAsync();
+
+    return result;
   }
 }

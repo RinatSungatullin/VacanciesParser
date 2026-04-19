@@ -8,17 +8,21 @@ public class VacancyService
 
   private ProfessionalCategory professionalCategory;
 
+  private VacancyHtmlParser htmlParser;
+
   public VacancyService()
   {
     this.fileService = new FileService();
     
     this.professionalCategory = new ProfessionalCategory();
+    
+    this.htmlParser = new VacancyHtmlParser();
   }
   
   public async Task<List<VacancyWrapper>> JoinVacancyView(List<VacancyWrapper> vacancies)
   {
     Console.WriteLine("parsing html");
-    VacancyHtmlParser parser = new VacancyHtmlParser();
+    //VacancyHtmlParser htmlParser = new VacancyHtmlParser();
 
     for (int i = 0; i < vacancies.Count; i++)
     {
@@ -30,7 +34,7 @@ public class VacancyService
 
       try
       {
-        string vacancyView = await parser.GetValueByKey(currentVacancyUrl, "Просмотры вакансии");
+        string vacancyView = await htmlParser.GetValueByKey(currentVacancyUrl, "Просмотры вакансии");
 
         if (!string.IsNullOrEmpty(vacancyView))
         {
@@ -145,6 +149,13 @@ public class VacancyService
     );
     
     this.fileService.WriteSummaryTableToCsv(statistic, statisticCalculator, vacancyStatisticFullPath);
+  }
+
+  public async Task<List<Vacancy>> GetVacancyFromPage(string htmlUrl)
+  {
+    var urls = await this.htmlParser.GetVacancyLinks(htmlUrl);
+    
+    return await this.htmlParser.GetVacancyListByUrl(urls);
   }
 
   /*public List<VacancyWrapper> FixEmptyValue(List<VacancyWrapper> vacancies)

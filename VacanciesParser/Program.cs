@@ -1,10 +1,11 @@
-﻿using VacanciesParser;
+﻿using System.Globalization;
+using VacanciesParser;
 
 class Program
 {
   static async Task Main(string[] args)
   {
-    VacancyService vacancyService = new VacancyService();
+    /*VacancyService vacancyService = new VacancyService();
     
     string baseFilePath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/Downloads";
     
@@ -58,14 +59,31 @@ class Program
       Console.WriteLine($"resume salary: {s.ResumeAverageSalary}");
 
       Console.WriteLine();
+    }*/
+
+    string vacancyHtmlUrl =
+      "https://trudvsem.ru/vacancy/search?_regionIds=1800000000000&page=0&salary=0&salary=999999&scheduleType=FULL&vacancyType=LONG";
+    
+    VacancyService vacancyService = new VacancyService();
+
+    var vacancies = await vacancyService.GetVacancyFromPage(vacancyHtmlUrl);
+
+    
+
+    foreach (var v in vacancies)
+    {
+      Console.WriteLine($"vacancy id: {v.Id}");
+      Console.WriteLine($"vacancy name: {v.JobName}");
+      Console.WriteLine($"salary from: {v.SalaryMin}");
+      Console.WriteLine($"salary to: {v.SalaryMax}");
+      Console.WriteLine($"url: {v.Url}");
+      Console.WriteLine($"specialization: {v.Category.Specialisation}");
+      Console.WriteLine($"education: {v.Requirement.Education}");
+      Console.WriteLine($"views: {v.Views}");
+      Console.WriteLine();
     }
     
-    /*foreach (var r in resumeStatistic)
-    {
-      Console.WriteLine($"professional group: {r.ProfessionalGroupName}");
-      Console.WriteLine($"vacancies quantity: {r.Quantity}");
-      Console.WriteLine($"average salary: {r.AverageSalary}");
-    }*/
+    //Console.WriteLine($"{vacancies.Count} vacancies");
   }
 
   private static Task<string> GetVacanciesJson(string url)
