@@ -30,6 +30,6 @@ public class SummaryStatistic
     VacancyAverageSalary = vacancyAverageSalary;
     VacancyViews = vacancyViews;
 
-    this.Intensity = resumeQuantity / vacancyQuantity;
+    this.Intensity = Math.Round((double)ResumeQuantity / (VacancyQuantity + 1), 2);
   }
 }

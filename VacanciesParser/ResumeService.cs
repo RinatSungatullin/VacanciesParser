@@ -23,7 +23,7 @@ public class ResumeService
       Console.WriteLine($"salary: {r.Salary}\n");
     }
 
-    Console.WriteLine($"всего резюме: {resumeList.Count}");
+    Console.WriteLine($"total resume: {resumeList.Count}");
 
     for (int i = 0; i < resumeList.Count; i++)
     {

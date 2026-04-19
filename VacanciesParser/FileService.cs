@@ -4,7 +4,7 @@ namespace VacanciesParser;
 
 public class FileService
 {
-  public void WriteVacanciesToCsv(List<VacancyWrapper> vacancies, string filePath, string fileName)
+  public void WriteVacanciesToCsv(List<Vacancy> vacancies, string filePath, string fileName)
   {
     string fullPath = Path.Combine(filePath, $"{fileName}.csv");
 
@@ -15,9 +15,9 @@ public class FileService
 
       foreach (var v in vacancies)
       {
-        sw.WriteLine($"{v.Vacancy.Id};{v.Vacancy.JobName};{v.Vacancy.SalaryMin};{v.Vacancy.SalaryMax};" +
-                     $"{v.Vacancy.Url};{v.Vacancy.Category.Specialisation};{v.Vacancy.Requirement.Education};" +
-                     $"{v.Vacancy.Views}");
+        sw.WriteLine($"{v.Id};{v.JobName};{v.SalaryMin};{v.SalaryMax};" +
+                     $"{v.Url};{v.Category.Specialisation};{v.Requirement.Education};" +
+                     $"{v.Views}");
       }
     }
   }
@@ -51,7 +51,7 @@ public class FileService
       foreach (var v in statistic)
       {
         sw.WriteLine($"{v.ProfessionalGroup};{v.VacancyQuantity};{v.VacancyAverageSalary};{v.VacancyViews};" +
-                     $"{v.VacancyQuantity};{v.ResumeAverageSalary};{v.Intensity}");
+                     $"{v.ResumeQuantity};{v.ResumeAverageSalary};{v.Intensity}");
       }
       
       sw.WriteLine($"Итог;{statisticCalculator.TotalVacancies};{statisticCalculator.TotalSalaryAverage};{statisticCalculator.TotalViews};" +

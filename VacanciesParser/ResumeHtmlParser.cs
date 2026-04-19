@@ -22,7 +22,7 @@ public class ResumeHtmlParser
 
     for (int i = 1; i <= 9; i++)
     {
-      Console.WriteLine($"page: {i}");
+      Console.WriteLine($"loading resume page: {i}");
 
       var button = page.Locator("button[data-action='append']");
 

@@ -5,39 +5,51 @@ class Program
 {
   static async Task Main(string[] args)
   {
-    /*VacancyService vacancyService = new VacancyService();
+    string apiUrl = "http://opendata.trudvsem.ru/api/v1/vacancies/region/1800000000000";
+    
+    string vacancyHtmlUrl =
+      "https://trudvsem.ru/vacancy/search?_regionIds=1800000000000&page=0&salary=0&salary=999999&scheduleType=FULL&vacancyType=LONG";
+    
+    string resumeUrl = "https://trudvsem.ru/cv/search?_regionIds=1800000000000&page=0&salary=0&salary=999999&experience=EXP_STAFF&cvType=LONG";
     
     string baseFilePath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/Downloads";
     
-    string apiUrl = "http://opendata.trudvsem.ru/api/v1/vacancies/region/1800000000000";
-
+    string vacanciesTablePath = $@"{baseFilePath}/vacancies.csv";
+    
+    string summaryStatisticTablePath = $@"{baseFilePath}/summary_statistic.csv";
+    
+    VacancyService vacancyService = new VacancyService();
+    
     // получение вакансии json из api
-    string vacanciesJSON = await GetVacanciesJson(apiUrl);
+    /*string vacanciesJSON = await GetVacanciesJson(apiUrl);
 
     List<VacancyWrapper> vacancies = DeserializeVacancies(vacanciesJSON);
 
     // Получение просмотров вакансий из html
-    vacancies = await vacancyService.JoinVacancyView(vacancies);
+    vacancies = await vacancyService.JoinVacancyView(vacancies);*/
+    
+    // Получение вакансий из html
+    List<Vacancy> vacancies = await vacancyService.GetVacancyFromPage(vacancyHtmlUrl);
+    
     
     // запись вакансий в таблицу
     vacancyService.WriteVacanciesToCsv(vacancies, baseFilePath, "vacancies");
-
-    string vacanciesTablePath = $@"{baseFilePath}/vacancies.csv";
-    
-    string vacanciesStatisticTablePath = $@"{baseFilePath}/vacancies_statistic.csv";
+    Console.WriteLine($"vacancies saved to: {vacanciesTablePath}");
     
     // чтение таблицы вакансий
     List<VacancyStatisticSample> vacancyStatisticSamples = vacancyService.ReadVacanciesCsv(vacanciesTablePath);
 
     List<VacancyStatistic> vacancyStatistics = vacancyService.CalculateVacancyStatistic(vacancyStatisticSamples);
+
+    
     
     // запись диаграммы
     WriteDiagrams(vacancyStatistics, baseFilePath);
+    Console.WriteLine($"diagrams saved to: {baseFilePath}");
 
-    string resumeUrl = "https://trudvsem.ru/cv/search?_regionIds=1800000000000&page=0&salary=0&salary=999999&experience=EXP_STAFF&cvType=LONG";
 
     ResumeService resumeService = new ResumeService();
-    
+
     var resumeList = await resumeService.GetResume(resumeUrl);
 
     var resumeStatistic = resumeService.GetResumeStatistic(resumeList);
@@ -45,9 +57,10 @@ class Program
     var summaryStatistics = GetSummaryStatistic(vacancyStatistics, resumeStatistic);
 
      // запись итоговой таблицы
-        vacancyService.WriteSummaryTableToCsv(summaryStatistics, vacanciesStatisticTablePath);
+     vacancyService.WriteSummaryTableToCsv(summaryStatistics, summaryStatisticTablePath);
+     Console.WriteLine($"summary statistic saved to: {summaryStatisticTablePath}");
     
-    foreach (var s in summaryStatistics)
+    /*foreach (var s in summaryStatistics)
     {
       Console.WriteLine($"professional group: {s.ProfessionalGroup}");
       
@@ -60,17 +73,9 @@ class Program
 
       Console.WriteLine();
     }*/
-
-    string vacancyHtmlUrl =
-      "https://trudvsem.ru/vacancy/search?_regionIds=1800000000000&page=0&salary=0&salary=999999&scheduleType=FULL&vacancyType=LONG";
-    
-    VacancyService vacancyService = new VacancyService();
-
-    var vacancies = await vacancyService.GetVacancyFromPage(vacancyHtmlUrl);
-
     
 
-    foreach (var v in vacancies)
+    /*foreach (var v in vacancies)
     {
       Console.WriteLine($"vacancy id: {v.Id}");
       Console.WriteLine($"vacancy name: {v.JobName}");
@@ -81,7 +86,7 @@ class Program
       Console.WriteLine($"education: {v.Requirement.Education}");
       Console.WriteLine($"views: {v.Views}");
       Console.WriteLine();
-    }
+    }*/
     
     //Console.WriteLine($"{vacancies.Count} vacancies");
   }
