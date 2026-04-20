@@ -15,6 +15,11 @@ public class VacancyHtmlParser
   /// <exception cref="Exception">Страница не доуступна</exception>
   public async Task<string> GetValueByKey(string htmlUrl, string keyValue)
   {
+    Environment.SetEnvironmentVariable(
+      "PLAYWRIGHT_BROWSERS_PATH",
+      Path.Combine(AppContext.BaseDirectory, "ms-playwright")
+    );
+    
     using var playwright = await Playwright.CreateAsync();
 
     var browser = await playwright.Chromium.LaunchAsync(new()
@@ -97,6 +102,11 @@ public class VacancyHtmlParser
   /// <returns>Коллексция ссылок вакансий.</returns>
   public async Task<List<string>> GetVacancyLinks(string htmlUrl)
   {
+    Environment.SetEnvironmentVariable(
+      "PLAYWRIGHT_BROWSERS_PATH",
+      Path.Combine(AppContext.BaseDirectory, "ms-playwright")
+    );
+    
     Console.WriteLine("getting vacancy urls");
     
     using var playwright = await Playwright.CreateAsync();

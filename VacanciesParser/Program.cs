@@ -39,7 +39,7 @@ class Program
     
     // запись вакансий в таблицу
     vacancyService.WriteVacanciesToCsv(vacancies, baseFilePath, "vacancies");
-    Console.WriteLine($"vacancies saved to: {vacanciesTablePath}");
+    Console.WriteLine($"таблица вакансий сохранена: {vacanciesTablePath}");
     
     // чтение таблицы вакансий
     List<VacancyStatisticSample> vacancyStatisticSamples = vacancyService.ReadVacanciesCsv(vacanciesTablePath);
@@ -50,7 +50,7 @@ class Program
     
     // запись диаграммы
     WriteDiagrams(vacancyStatistics, baseFilePath);
-    Console.WriteLine($"diagrams saved to: {baseFilePath}");
+    Console.WriteLine($"диаграммы сохранены: {baseFilePath}");
 
 
     ResumeService resumeService = new ResumeService();
@@ -63,7 +63,11 @@ class Program
 
      // запись итоговой таблицы
      vacancyService.WriteSummaryTableToCsv(summaryStatistics, summaryStatisticTablePath);
-     Console.WriteLine($"summary statistic saved to: {summaryStatisticTablePath}");
+     Console.WriteLine($"итоговая статистика сохранена: {summaryStatisticTablePath}");
+
+     Console.WriteLine("Нажмите любую клавишу для завершения");
+     
+     Console.ReadKey();
   }
 
   private static Task<string> GetVacanciesJson(string url)

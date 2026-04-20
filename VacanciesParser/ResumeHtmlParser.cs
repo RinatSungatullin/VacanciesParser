@@ -7,6 +7,11 @@ public class ResumeHtmlParser
 {
   public async Task<List<Resume>> ParseResume(List<Resume> resumeList, string htmlUrl)
   {
+    Environment.SetEnvironmentVariable(
+      "PLAYWRIGHT_BROWSERS_PATH",
+      Path.Combine(AppContext.BaseDirectory, "ms-playwright")
+    );
+    
     using var playwright = await Playwright.CreateAsync();
 
     var browser = await playwright.Chromium.LaunchAsync(new()
