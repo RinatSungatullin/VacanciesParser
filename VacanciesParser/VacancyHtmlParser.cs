@@ -179,125 +179,162 @@ public class VacancyHtmlParser
   public async Task<List<Vacancy>> GetVacancyListByUrl(List<string> urls)
   {
     Console.WriteLine("\nGetting vacancies by url");
+
     using var playwright = await Playwright.CreateAsync();
 
     var browser = await playwright.Chromium.LaunchAsync(new()
     {
-      Headless = true
+        Headless = true
     });
 
     var page = await browser.NewPageAsync();
 
+    // 🔥 уменьшаем таймауты (чтобы не ждать 30 сек)
+    page.SetDefaultTimeout(10000);
+
     var result = new List<Vacancy>();
-    
+
     int vacancyCounter = 1;
-    
+
     foreach (var url in urls)
     {
-      try
-      {
-        await page.GotoAsync(url);
-
-        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-        await page.WaitForSelectorAsync(".vacancy-sidebar__price");
-
-        var id = url.Split('/').Last();
-
-        var jobName = await page.Locator("h1.content__title")
-                        .EvaluateAsync<string>("el => el?.textContent?.trim()")
-                      ?? "не указано";
-
-        int salaryMin = 0;
-        int salaryMax = 0;
-
-        var salaryLocator = page.Locator(".vacancy-sidebar__price");
-
-        await page.WaitForFunctionAsync(@"
-                () => {
-                    const el = document.querySelector('.vacancy-sidebar__price');
-                    return el && /\d/.test(el.textContent);
-                }
-            ");
-
-        var salaryText = await salaryLocator
-                           .EvaluateAsync<string>("el => el.textContent")
-                         ?? "";
-
-        salaryText = salaryText
-          .Replace("\u00A0", " ")
-          .Trim();
-
-        var numbers = Regex.Matches(salaryText, @"\d[\d\s]*")
-          .Select(m => int.Parse(m.Value.Replace(" ", "")))
-          .ToList();
-
-        if (numbers.Count > 0)
-          salaryMin = numbers[0];
-
-        if (numbers.Count > 1)
-          salaryMax = numbers[1];
-
-        var category = await page
-                         .Locator("dt:has-text('Сфера деятельности:') + dd")
-                         .EvaluateAsync<string>("el => el?.textContent?.trim()")
-                       ?? "не указано";
-
-        var education = await page
-                          .Locator("dt:has-text('Образование:') + dd")
-                          .EvaluateAsync<string>("el => el?.textContent?.trim()")
-                        ?? "не указано";
-
-        int views = 0;
-
-        var viewsText = await page
-                          .Locator("dd[data-content='views']")
-                          .EvaluateAsync<string>("el => el?.textContent?.trim()")
-                        ?? "0";
-
-        int.TryParse(Regex.Match(viewsText, @"\d+").Value, out views);
-
-        var vacancy = new Vacancy
+        try
         {
-          Id = id,
-          JobName = jobName,
-          SalaryMin = salaryMin,
-          SalaryMax = salaryMax,
-          Url = url,
-          Views = views.ToString(),
+            // -------------------------
+            // ПЕРЕХОД (без NetworkIdle)
+            // -------------------------
+            await page.GotoAsync(url, new()
+            {
+                WaitUntil = WaitUntilState.DOMContentLoaded,
+                Timeout = 15000
+            });
 
-          Category = new Category
-          {
-            Specialisation = category
-          },
+            // маленькая пауза → даём JS дорисовать DOM
+            await page.WaitForTimeoutAsync(300);
 
-          Requirement = new Requirement
-          {
-            Education = education
-          }
-        };
+            // -------------------------
+            // ID
+            // -------------------------
+            var id = url.Split('/').Last();
 
-        result.Add(vacancy);
+            // -------------------------
+            // JOB NAME
+            // -------------------------
+            string jobName = await SafeGetText(page.Locator("h1.content__title"));
+            if (string.IsNullOrWhiteSpace(jobName))
+                jobName = "не указано";
 
-        
-        
-        Console.WriteLine($"\nvacancy {vacancyCounter++}:");
-        Console.WriteLine($"id: {vacancy.Id}");
-        Console.WriteLine($"job name: {vacancy.JobName}");
-        Console.WriteLine($"salary from: {vacancy.SalaryMin}");
-        Console.WriteLine($"salary to: {vacancy.SalaryMax}");
-        Console.WriteLine($"url: {vacancy.Url}");
-        Console.WriteLine($"specialization: {vacancy.Category.Specialisation}");
-        Console.WriteLine($"education: {vacancy.Requirement.Education}");
-        Console.WriteLine($"vacancy views: {vacancy.Views}");
-      }
-      catch (Exception ex)
-      {
-        Console.WriteLine($"ERROR {url}: {ex.Message}");
-      }
+            // -------------------------
+            // SALARY (без зависаний)
+            // -------------------------
+            int salaryMin = 0;
+            int salaryMax = 0;
+
+            var salaryText = await SafeGetText(page.Locator(".vacancy-sidebar__price"));
+
+            salaryText = salaryText
+                .Replace("\u00A0", " ")
+                .Trim();
+
+            var numbers = Regex.Matches(salaryText, @"\d[\d\s]*")
+                .Select(m => int.Parse(m.Value.Replace(" ", "")))
+                .ToList();
+
+            if (numbers.Count > 0)
+                salaryMin = numbers[0];
+
+            if (numbers.Count > 1)
+                salaryMax = numbers[1];
+
+            // -------------------------
+            // CATEGORY
+            // -------------------------
+            var category = await SafeGetText(
+                page.Locator("dt:has-text('Сфера деятельности:') + dd")
+            );
+
+            if (string.IsNullOrWhiteSpace(category))
+                category = "не указано";
+
+            // -------------------------
+            // EDUCATION
+            // -------------------------
+            var education = await SafeGetText(
+                page.Locator("dt:has-text('Образование:') + dd")
+            );
+
+            if (string.IsNullOrWhiteSpace(education))
+                education = "не указано";
+
+            // -------------------------
+            // VIEWS
+            // -------------------------
+            int views = 0;
+
+            var viewsText = await SafeGetText(
+                page.Locator("dd[data-content='views']")
+            );
+
+            int.TryParse(Regex.Match(viewsText, @"\d+").Value, out views);
+
+            // -------------------------
+            // RESULT
+            // -------------------------
+            var vacancy = new Vacancy
+            {
+                Id = id,
+                JobName = jobName,
+                SalaryMin = salaryMin,
+                SalaryMax = salaryMax,
+                Url = url,
+                Views = views.ToString(),
+
+                Category = new Category
+                {
+                    Specialisation = category
+                },
+
+                Requirement = new Requirement
+                {
+                    Education = education
+                }
+            };
+
+            result.Add(vacancy);
+
+            Console.WriteLine($"\nvacancy {vacancyCounter++}:");
+            Console.WriteLine($"id: {vacancy.Id}");
+            Console.WriteLine($"job name: {vacancy.JobName}");
+            Console.WriteLine($"salary from: {vacancy.SalaryMin}");
+            Console.WriteLine($"salary to: {vacancy.SalaryMax}");
+            Console.WriteLine($"url: {vacancy.Url}");
+            Console.WriteLine($"specialization: {vacancy.Category.Specialisation}");
+            Console.WriteLine($"education: {vacancy.Requirement.Education}");
+            Console.WriteLine($"vacancy views: {vacancy.Views}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"ERROR {url}: {ex.Message}");
+        }
     }
 
     await browser.CloseAsync();
 
     return result;
+  }
+  
+  private async Task<string> SafeGetText(ILocator locator)
+  {
+    try
+    {
+      if (await locator.CountAsync() == 0)
+        return "";
+
+      return await locator.EvaluateAsync<string>("el => el?.textContent ?? ''");
+    }
+    catch
+    {
+      return "";
+    }
   }
 }
