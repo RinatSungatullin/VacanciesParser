@@ -22,7 +22,6 @@ public class VacancyService
   public async Task<List<VacancyWrapper>> JoinVacancyView(List<VacancyWrapper> vacancies)
   {
     Console.WriteLine("parsing html");
-    //VacancyHtmlParser htmlParser = new VacancyHtmlParser();
 
     for (int i = 0; i < vacancies.Count; i++)
     {
@@ -125,18 +124,6 @@ public class VacancyService
     return result;
   }
 
-  /*public void WriteSummaryTableToCsv(List<VacancyStatistic>vacanciesStatistic,
-                                      string vacancyStatisticFullPath)
-  {
-    VacancyStatisticCalculator statisticCalculator = new VacancyStatisticCalculator(
-      vacanciesStatistic.Sum(x => x.Quantity),
-      (int)vacanciesStatistic.Average(x => x.AverageSalary),
-      vacanciesStatistic.Sum(x => x.Views)
-      );
-    
-    this.fileService.WriteSummaryTableToCsv(vacanciesStatistic, statisticCalculator, vacancyStatisticFullPath);
-  }*/
-
   public void WriteSummaryTableToCsv(List<SummaryStatistic> statistic, string vacancyStatisticFullPath)
   {
     SummaryStatisticCalculator statisticCalculator = new SummaryStatisticCalculator(
@@ -157,17 +144,4 @@ public class VacancyService
     
     return await this.htmlParser.GetVacancyListByUrl(urls);
   }
-
-  /*public List<VacancyWrapper> FixEmptyValue(List<VacancyWrapper> vacancies)
-  {
-    for (int i = 0; i < vacancies.Count; i++)
-    {
-      if (string.IsNullOrEmpty(vacancies[i].Vacancy.Views))
-      {
-        vacancies[i].Vacancy.Views = "0";
-      }
-    }
-    
-    return vacancies;
-  }*/
 }
