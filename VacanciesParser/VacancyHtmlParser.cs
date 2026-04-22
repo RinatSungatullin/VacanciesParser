@@ -24,7 +24,7 @@ public class VacancyHtmlParser
 
     var browser = await playwright.Chromium.LaunchAsync(new()
     {
-      Headless = false
+      Headless = true
     });
 
     var context = await browser.NewContextAsync(new()

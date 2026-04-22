@@ -12,8 +12,12 @@ class Program
     
     string resumeUrl = "https://trudvsem.ru/cv/search?_regionIds=1800000000000&page=0&salary=0&salary=999999&experience=EXP_STAFF&cvType=LONG";
     
-    string baseFilePath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/VacancyParser";
+    // директория пользователя
+    // string baseFilePath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/VacancyParser";
 
+    //
+    string baseFilePath = $"{AppContext.BaseDirectory}/VacancyParser";
+    
     if (!Directory.Exists(baseFilePath))
       Directory.CreateDirectory($"{baseFilePath}");
     
@@ -24,17 +28,19 @@ class Program
     VacancyService vacancyService = new VacancyService();
     
     // получение вакансии json из api
-    /*string vacanciesJSON = await GetVacanciesJson(apiUrl);
+    string vacanciesJSON = await GetVacanciesJson(apiUrl);
 
     List<VacancyWrapper> vacanciesWrapper = DeserializeVacancies(vacanciesJSON);
+
+    Console.WriteLine($"total {vacanciesWrapper.Count} vacancies\n");
     
     // Получение просмотров вакансий из html
     vacanciesWrapper = await vacancyService.JoinVacancyView(vacanciesWrapper);
     
-    List<Vacancy> vacancies = MapToVacancies(vacanciesWrapper);*/
+    List<Vacancy> vacancies = MapToVacancies(vacanciesWrapper);
     
     // Получение вакансий из html
-    List<Vacancy> vacancies = await vacancyService.GetVacancyFromPage(vacancyHtmlUrl);
+    //List<Vacancy> vacancies = await vacancyService.GetVacancyFromPage(vacancyHtmlUrl);
     
     
     // запись вакансий в таблицу
