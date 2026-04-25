@@ -16,7 +16,7 @@ class Program
     // string baseFilePath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/VacancyParser";
 
     //
-    string baseFilePath = $"{AppContext.BaseDirectory}/VacancyParser";
+    string baseFilePath = $"{AppContext.BaseDirectory}/result";
     
     if (!Directory.Exists(baseFilePath))
       Directory.CreateDirectory($"{baseFilePath}");
