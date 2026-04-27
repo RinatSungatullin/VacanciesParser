@@ -19,6 +19,11 @@ public class VacancyService
     this.htmlParser = new VacancyHtmlParser();
   }
   
+  /// <summary>
+  /// Получить просмотры вакансий.
+  /// </summary>
+  /// <param name="vacancies">Вакансии</param>
+  /// <returns>Вакансии с просмотреом.</returns>
   public async Task<List<VacancyWrapper>> JoinVacancyView(List<VacancyWrapper> vacancies)
   {
     Console.WriteLine("parsing html");
@@ -55,6 +60,11 @@ public class VacancyService
     return vacancies;
   }
 
+  /// <summary>
+  /// получить статистику вакансий по таблице вакансий.
+  /// </summary>
+  /// <param name="filePath">Путь к таблице с вакансиями.</param>
+  /// <returns>Список статистики по вакасниям.</returns>
   public List<VacancyStatisticSample> ReadVacanciesCsv(string filePath)
   {
     List<VacancyStatisticSample> vacancies = new List<VacancyStatisticSample>();
@@ -75,6 +85,11 @@ public class VacancyService
     return vacancies;
   }
 
+  /// <summary>
+  /// Мапировать строковую запись из таблицы в объект VacancyStatisticSample.
+  /// </summary>
+  /// <param name="line">Строка вакансии.</param>
+  /// <returns>Объект VacancyStatisticSample.</returns>
   private VacancyStatisticSample MapLinesToVacancyStatistics(string line)
   {
     string[] vacancySplit = line.Split(';');
@@ -95,11 +110,22 @@ public class VacancyService
     return new VacancyStatisticSample(this.professionalCategory.GetProfessionalGroupByJobName(vacancySplit[1]), averageSalary, vacancyView);
   }
 
+  /// <summary>
+  /// Записать список вакансий в csv.
+  /// </summary>
+  /// <param name="vacancies">Список вакансий.</param>
+  /// <param name="vacanciesFilePath">Путь.</param>
+  /// <param name="fileName">Имя файла.</param>
   public void WriteVacanciesToCsv(List<Vacancy> vacancies, string vacanciesFilePath, string fileName)
   {
     this.fileService.WriteVacanciesToCsv(vacancies, vacanciesFilePath, fileName);
   }
 
+  /// <summary>
+  /// Рассчитать итоговую статистику по вакансиям.
+  /// </summary>
+  /// <param name="vacancies">Список статистики по вакансиям.</param>
+  /// <returns>Коллекция расчитанной статистики по вакансиям.</returns>
   public List<VacancyStatistic> CalculateVacancyStatistic(List<VacancyStatisticSample> vacancies)
   {
     var result = new List<VacancyStatistic>();
@@ -124,6 +150,11 @@ public class VacancyService
     return result;
   }
 
+  /// <summary>
+  /// Записать итоговую статистику в файл.
+  /// </summary>
+  /// <param name="statistic">Общая статистика.</param>
+  /// <param name="vacancyStatisticFullPath">Путь для сохранения</param>
   public void WriteSummaryTableToCsv(List<SummaryStatistic> statistic, string vacancyStatisticFullPath)
   {
     SummaryStatisticCalculator statisticCalculator = new SummaryStatisticCalculator(
@@ -138,6 +169,11 @@ public class VacancyService
     this.fileService.WriteSummaryTableToCsv(statistic, statisticCalculator, vacancyStatisticFullPath);
   }
 
+  /// <summary>
+  /// Получить вакансии из html страницы.
+  /// </summary>
+  /// <param name="htmlUrl">Ссылка на вакансии.</param>
+  /// <returns>Список вакансий.</returns>
   public async Task<List<Vacancy>> GetVacancyFromPage(string htmlUrl)
   {
     var urls = await this.htmlParser.GetVacancyLinks(htmlUrl);

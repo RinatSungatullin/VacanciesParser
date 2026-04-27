@@ -15,10 +15,10 @@ public class VacancyHtmlParser
   /// <exception cref="Exception">Страница не доуступна</exception>
   public async Task<string> GetValueByKey(string htmlUrl, string keyValue)
   {
-    Environment.SetEnvironmentVariable(
+    /*Environment.SetEnvironmentVariable(
       "PLAYWRIGHT_BROWSERS_PATH",
       Path.Combine(AppContext.BaseDirectory, "ms-playwright")
-    );
+    );*/
     
     using var playwright = await Playwright.CreateAsync();
 

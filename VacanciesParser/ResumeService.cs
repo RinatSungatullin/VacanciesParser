@@ -9,6 +9,11 @@ public class ResumeService
     this.professionalCategory = new ProfessionalCategory();
   }
   
+  /// <summary>
+  /// Получить резюме из html страницы.
+  /// </summary>
+  /// <param name="htmlUrl">Ссылка на резюме.</param>
+  /// <returns>Список резюме.</returns>
   public async Task<List<Resume>> GetResume(string htmlUrl)
   {
     ResumeHtmlParser  parser = new ResumeHtmlParser();
@@ -16,23 +21,26 @@ public class ResumeService
     List<Resume> resumeList = new List<Resume>();
     
     await parser.ParseResume(resumeList, htmlUrl);
-    
-    foreach (var r in resumeList)
-    {
-      Console.WriteLine($"job name: {r.JobName}");
-      Console.WriteLine($"salary: {r.Salary}\n");
-    }
 
     Console.WriteLine($"total resume: {resumeList.Count}");
 
+    Console.WriteLine("\ngetting groups:");
     for (int i = 0; i < resumeList.Count; i++)
     {
       resumeList[i].ProfessionalGroupName = SetProfessionalGroup(resumeList[i].JobName);
+
+      Console.WriteLine($"\nvacancy: {resumeList[i].JobName}");
+      Console.WriteLine($"group: {resumeList[i].ProfessionalGroupName}");
     }
     
     return resumeList;
   }
 
+  /// <summary>
+  /// Получить статистику по вакансиям.
+  /// </summary>
+  /// <param name="resumes">Список резюме.</param>
+  /// <returns>Статистика по резюме.</returns>
   public List<ResumeStatistic> GetResumeStatistic(List<Resume> resumes)
   {
     return resumes
@@ -48,6 +56,11 @@ public class ResumeService
       .ToList();
   }
 
+  /// <summary>
+  /// Установить профессиональную группу для резюме.
+  /// </summary>
+  /// <param name="jobName">Название вакансии.</param>
+  /// <returns>Группа.</returns>
   private string SetProfessionalGroup(string jobName)
   {
     var name = this.professionalCategory.GetProfessionalGroupByJobName(jobName);

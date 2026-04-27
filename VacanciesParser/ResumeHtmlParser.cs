@@ -7,10 +7,10 @@ public class ResumeHtmlParser
 {
   public async Task<List<Resume>> ParseResume(List<Resume> resumeList, string htmlUrl)
   {
-    Environment.SetEnvironmentVariable(
+    /*Environment.SetEnvironmentVariable(
       "PLAYWRIGHT_BROWSERS_PATH",
       Path.Combine(AppContext.BaseDirectory, "ms-playwright")
-    );
+    );*/
     
     using var playwright = await Playwright.CreateAsync();
 
@@ -29,30 +29,38 @@ public class ResumeHtmlParser
     {
       Console.WriteLine($"loading resume page: {i}");
 
-      var button = page.Locator("button[data-action='append']");
-
-      if (await button.CountAsync() == 0)
-        break;
-
-      await button.ScrollIntoViewIfNeededAsync();
-
-      int before = (await page.QuerySelectorAllAsync(".search-results-simple-card")).Count;
-
-      await button.ClickAsync();
-
       try
       {
-        await page.WaitForFunctionAsync(
-          $"document.querySelectorAll('.search-results-simple-card').length > {before}",
-          null,
-          new() { Timeout = 5000 }
-        );
+        var button = page.Locator("button[data-action='append']");
+
+        if (await button.CountAsync() == 0)
+          break;
+
+        await button.ScrollIntoViewIfNeededAsync();
+
+        int before = (await page.QuerySelectorAllAsync(".search-results-simple-card")).Count;
+
+        await button.ClickAsync();
+        try
+        {
+          await page.WaitForFunctionAsync(
+            $"document.querySelectorAll('.search-results-simple-card').length > {before}",
+            null,
+            new() { Timeout = 5000 }
+          );
+        }
+        catch
+        {
+          Console.WriteLine("Новые данные не загрузились");
+          break;
+        }
       }
-      catch
+      catch (Exception e)
       {
-        Console.WriteLine("Новые данные не загрузились");
         break;
       }
+      
+      
     }
 
     var cards = await page.QuerySelectorAllAsync(".search-results-simple-card");

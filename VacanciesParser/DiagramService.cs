@@ -4,9 +4,9 @@ namespace VacanciesParser;
 
 public class DiagramService
 {
-  public void WriteVacanciesCircleDiagram(List<VacancyStatistic> vacanciesStatistic, string path)
+  public void WriteProfessionalGroupsCircleDiagram(List<VacancyStatistic> vacanciesStatistic, string path, string fileName)
   {
-    string fullPath = $"{path}/professional_groups.png";
+    string fullPath = $"{path}/{fileName}.png";
     
     Plot plot = new();
     
@@ -36,11 +36,11 @@ public class DiagramService
     plot.SavePng(fullPath, 1000, 800);
   }
 
-  public void WriteSalaryLineDiagram(List<VacancyStatistic> vacanciesStatistic, string path)
+  public void WriteSalaryLineDiagram(List<VacancyStatistic> vacanciesStatistic, string path, string fileName)
   {
     Plot plot = new Plot();
     
-    string fullPath = $"{path}/professional_groups_salary.png";
+    string fullPath = $"{path}/{fileName}.png";
     
     double[] values = new double[vacanciesStatistic.Count];
 

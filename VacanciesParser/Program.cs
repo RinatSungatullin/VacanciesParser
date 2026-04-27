@@ -5,25 +5,32 @@ class Program
 {
   static async Task Main(string[] args)
   {
-    string apiUrl = "http://opendata.trudvsem.ru/api/v1/vacancies/region/1800000000000";
+    // api удмуртия
+    // string apiUrl = "http://opendata.trudvsem.ru/api/v1/vacancies/region/1800000000000";
+    
+    // api регион
+    string regionKey = "izhevsk";
+    string region = Regions[regionKey];
+    string regionCode = RegionCodes[regionKey];
+    
+    string apiUrl = $"http://opendata.trudvsem.ru/api/v1/vacancies?text={region}";
     
     string vacancyHtmlUrl =
       "https://trudvsem.ru/vacancy/search?_regionIds=1800000000000&page=0&salary=0&salary=999999&scheduleType=FULL&vacancyType=LONG";
     
-    string resumeUrl = "https://trudvsem.ru/cv/search?_regionIds=1800000000000&page=0&salary=0&salary=999999&experience=EXP_STAFF&cvType=LONG";
+    string resumeUrl = $"https://trudvsem.ru/cv/search?_regionIds=1800000000000&_districts={regionCode}&page=0&salary=0&salary=999999&experience=EXP_STAFF&cvType=LONG";
     
     // директория пользователя
     // string baseFilePath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/VacancyParser";
-
-    //
+    
     string baseFilePath = $"{AppContext.BaseDirectory}/result";
     
     if (!Directory.Exists(baseFilePath))
       Directory.CreateDirectory($"{baseFilePath}");
     
-    string vacanciesTablePath = $@"{baseFilePath}/vacancies.csv";
+    string vacanciesTablePath = $@"{baseFilePath}/vacancies_{region}.csv";
     
-    string summaryStatisticTablePath = $@"{baseFilePath}/summary_statistic.csv";
+    string summaryStatisticTablePath = $@"{baseFilePath}/summary_statistic_{region}.csv";
     
     VacancyService vacancyService = new VacancyService();
     
@@ -44,8 +51,9 @@ class Program
     
     
     // запись вакансий в таблицу
-    vacancyService.WriteVacanciesToCsv(vacancies, baseFilePath, "vacancies");
+    vacancyService.WriteVacanciesToCsv(vacancies, baseFilePath, $"vacancies_{region}");
     Console.WriteLine($"таблица вакансий сохранена: {vacanciesTablePath}");
+    
     
     // чтение таблицы вакансий
     List<VacancyStatisticSample> vacancyStatisticSamples = vacancyService.ReadVacanciesCsv(vacanciesTablePath);
@@ -53,11 +61,14 @@ class Program
     List<VacancyStatistic> vacancyStatistics = vacancyService.CalculateVacancyStatistic(vacancyStatisticSamples);
 
     
-    
     // запись диаграммы
-    WriteDiagrams(vacancyStatistics, baseFilePath);
+    WriteDiagrams(vacancyStatistics, baseFilePath, region);
     Console.WriteLine($"диаграммы сохранены: {baseFilePath}");
-
+   
+ 
+    
+    
+    
 
     ResumeService resumeService = new ResumeService();
 
@@ -90,12 +101,12 @@ class Program
     return deserializer.DeserializeVacanciesJSON(vacanciesJSON);
   }
 
-  private static void WriteDiagrams(List<VacancyStatistic> vacancyStatistics, string filePath)
+  private static void WriteDiagrams(List<VacancyStatistic> vacancyStatistics, string filePath, string region)
   {
     DiagramService ds = new DiagramService();
     
-    ds.WriteVacanciesCircleDiagram(vacancyStatistics, filePath);
-    ds.WriteSalaryLineDiagram(vacancyStatistics, filePath);
+    ds.WriteProfessionalGroupsCircleDiagram(vacancyStatistics, filePath, $"professionalGroups_{region}");
+    ds.WriteSalaryLineDiagram(vacancyStatistics, filePath, $"VacanciesSalary_{region}");
   }
 
   private static List<SummaryStatistic> GetSummaryStatistic(List<VacancyStatistic> vacancies,
@@ -154,4 +165,20 @@ class Program
       .Select(w => w.Vacancy)
       .ToList();
   }
+
+  private static Dictionary<string, string> Regions = new Dictionary<string, string>()
+  {
+    ["izhevsk"] = "ижевск",
+    ["votkinsk"] = "воткинск",
+    ["sarapul"] = "сарапул",
+    ["glazov"] = "глазов"
+  };
+
+  private static Dictionary<string, string> RegionCodes = new Dictionary<string, string>()
+  {
+    ["izhevsk"] = "1800000100000",
+    ["votkinsk"] = "1800000300000",
+    ["sarapul"] = "1800000200000",
+    ["glazov"] = "1800000400000"
+  };
 }
